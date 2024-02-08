@@ -2,7 +2,13 @@
 
 export(cleanWHTransfers)
 export(convertTitanHTML)
+export(convertWHTransfers)
 export(kinderNumToStr)
 export(kinderStrToNum)
 export(readTitanHTML)
 export(removeDiscontinued)
+import(janitor)
+import(rvest)
+import(stringr)
+import(tidyverse)
+import(tools)

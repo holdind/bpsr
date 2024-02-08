@@ -4,6 +4,9 @@
 # also use it to fix the terrible practice of building the word DISCONTINUED
 # into keys
 
+#' @import tidyverse tools janitor rvest
+NULL
+
 #' Import and clean the Warehouse transfers report
 #'
 #' This function imports the badly formatted Titan Warehouse Transfer Report and
@@ -51,16 +54,37 @@ cleanWHTransfers <- function(inFile) {
 #'
 #' This function imports a Titan HTML report and converts it to a CSV
 #'
-#' @param infile Path to the input file
+#' @param inFile Path to the input file
 #' @return a csv file in the same directory as the html file
 #' @export
 
 convertTitanHTML <-  function(inFile) {
-  outFile <- inFile %>%
-    rvest::read_html() %>%
-    rvest::html_table() %>%
-    .[[1]] %>%
-    janitor::clean_names(case='lower_camel')
+  outFile <- readTitanHTML(inFile)
+
+  outFileDir <- sprintf(
+    '%s.csv',
+    tools::file_path_sans_ext(inFile)
+  )
+
+  write.csv(
+    outFile,
+    outFileDir,
+    na = '',
+    row.names = F
+  )
+}
+
+#' Clean and convert a Warehouse Transfers report to csv
+#'
+#' This function imports an HTML Warehouse Transfers Report, converts it to a
+#' friendlier format, then exports it as a csv in the same directory.
+#'
+#' @param inFile Path to the input file
+#' @return a csv file in the same directory as the html file
+#' @export
+
+convertWHTransfers <- function(inFile) {
+  outFile <- cleanWHTransfers(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -81,7 +105,7 @@ convertTitanHTML <-  function(inFile) {
 #' This function simplifies the process of importing and cleaning a report from
 #' Titan
 #'
-#' @param infile Path to the saved Titan HTML report
+#' @param inFile Path to the saved Titan HTML report
 #' @return A data frame containing the content of the Titan Report
 #' @export
 

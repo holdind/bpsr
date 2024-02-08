@@ -1,3 +1,6 @@
+#' @import stringr
+NULL
+
 #' Convert a numeric grade vector to a character grade vector
 #'
 #' This function takes a numeric grade vector or column and converts it to a
