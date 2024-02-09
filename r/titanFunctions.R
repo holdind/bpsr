@@ -46,7 +46,10 @@ cleanWHTransfers <- function(inFile) {
       idTable, by = 'idGrouping'
     ) %>%
     mutate(
-      expectedDate = as.Date(expectedDate, format = '%b %d, %Y')
+      expectedDate = as.POSIXct(expectedDate, format = '%b %d, %Y')
+    ) %>%
+    select(
+      -internalHeader,-idGrouping
     )
 }
 
