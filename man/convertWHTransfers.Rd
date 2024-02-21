@@ -7,7 +7,7 @@
 convertWHTransfers(inFile)
 }
 \arguments{
-\item{infile}{Path to the input file}
+\item{inFile}{Path to the input file}
 }
 \value{
 a csv file in the same directory as the html file

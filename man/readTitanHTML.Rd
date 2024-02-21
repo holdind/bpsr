@@ -7,7 +7,7 @@
 readTitanHTML(inFile)
 }
 \arguments{
-\item{infile}{Path to the saved Titan HTML report}
+\item{inFile}{Path to the saved Titan HTML report}
 }
 \value{
 A data frame containing the content of the Titan Report
