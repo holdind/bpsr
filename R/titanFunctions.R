@@ -37,7 +37,8 @@ cleanWHTransfers <- function(inFile) {
 
       product = sub('.*?\\)','',headerString),
       product = sub('^\\)','',product),
-      product = stringr::str_trim(product)
+      product = stringr::str_trim(product),
+
     ) %>% select(-headerString)
 
   step1 %>%
@@ -46,7 +47,8 @@ cleanWHTransfers <- function(inFile) {
       idTable, by = 'idGrouping'
     ) %>%
     mutate(
-      expectedDate = as.POSIXct(expectedDate, format = '%b %d, %Y')
+      expectedDate = as.POSIXct(expectedDate, format = '%b %d, %Y', tz = 'UTC'),
+      quantity = as.numeric(quantity)
     ) %>%
     select(
       -internalHeader,-idGrouping
@@ -138,7 +140,62 @@ removeDiscontinued <- function(vector) {
   return(returnVector)
 }
 
+#' Separate and create multiple line items in the Purchasing report in instances
+#' where a report combines line items in this convention - 'x unit & y case'
+#'
+#' Titan designs some of its reports, most notably the purchasing report, to
+#' list units and cases in the same line item. In order to get around this
+#' convetion, this command will split those items and produce separate line
+#' items, one for ases, and one for units.
+#'
+#' @param df A Titan report containing lines with units and cases listed
+#'   together in one line item.
+#' @param var The variable in which cases and units are listed together
+#'   formatted 'x units & y cases'.
+#' @return a new dataset where the units and cases are split into multiple line
+#'   items.
+#' @export
 
+sepMultipleInventory <- function(df, var) {
+
+  varName <- deparse(substitute(var))
+
+  df %>%
+    mutate(totSplits = stringr::str_count({{ var }},'&')) %>%
+    separate({{ var }}, into = paste0('var',seq(1:max(.$totSplits)+1)),sep= ' & ') %>%
+    pivot_longer(
+      cols = paste0('var',seq(1:max(.$totSplits)+1)),
+      values_to = varName,
+      values_drop_na = T
+    ) %>%
+    select(-totSplits,-name)
+
+}
+
+#' Split a text units column into the number and the unit.
+#'
+#' Titan reports build their units columns as strings, formatted as such 'n
+#' units'. This function splits the number from the units, and converts the
+#' number to a numeric value.
+#'
+#' @param df A Titan report containing a string units column formatted 'n
+#'   units'.
+#' @param var The Variable containing a string units column formatted 'n units'.
+#' @return a data frame with a string units column and a numeric total units
+#'   column.
+#' @export
+
+sepQuantAndUnit <- function(df, var) {
+
+  df %>%
+    separate(
+      {{ var }}, into = c('quantity','unitOfMeasure'),
+      extra = 'merge',
+      sep = ' '
+    ) %>%
+    mutate(quantity = as.numeric(quantity))
+
+}
 
 
 
