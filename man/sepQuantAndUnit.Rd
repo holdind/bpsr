@@ -4,13 +4,17 @@
 \alias{sepQuantAndUnit}
 \title{Split a text units column into the number and the unit.}
 \usage{
-sepQuantAndUnit(df, var)
+sepQuantAndUnit(df, var, nameTotal, nameUnits)
 }
 \arguments{
 \item{df}{A Titan report containing a string units column formatted 'n
 units'.}
 
 \item{var}{The Variable containing a string units column formatted 'n units'.}
+
+\item{nameTotal}{What you want to name the new total items variable.}
+
+\item{nameUnits}{What you want to name the new units variable}
 }
 \value{
 a data frame with a string units column and a numeric total units
