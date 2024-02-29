@@ -3,6 +3,7 @@
 export(fiscYearFromDate)
 export(kinderNumToStr)
 export(kinderStrToNum)
+export(loadEndicoReports)
 export(removeDiscontinued)
 export(schToFiscalYear)
 export(schYearFromDate)
