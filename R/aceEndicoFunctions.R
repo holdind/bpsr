@@ -19,18 +19,18 @@ NULL
 #' @export
 
 loadEndicoReports <- function(directory) {
-
+  
   fileNames <- list.files(
     path = directory,
     pattern = 'velocity'
   )
   
-  aeFileNames <- aeFileNames[!grepl('\\~',aeFileNames)]
+  fileNames <- fileNames[!grepl('\\~',fileNames)]
   
   
   aeRep <- data.frame()
   aeAllowanceDF <- data.frame() 
-   
+  
   byoColNames <- c(
     'transactionID', 'schoolState', 'raNumber','raName',
     'schoolName', 'dropMe', 'creationDate', 'invDate', 'invNbr',
@@ -98,7 +98,9 @@ loadEndicoReports <- function(directory) {
       plyr::rbind.fill(aeFile)
     
   }
-
+  
+  return(list(aeRep,aeAllowanceDF))
+  
 }
 
 
