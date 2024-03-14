@@ -20,10 +20,12 @@ NULL
 
 fiscYearFromDate <- function(date) {
 
-  lubridate::year({{ date }}) + ifelse(
+  fiscYear <- lubridate::year({{ date }}) + ifelse(
     lubridate::month({{ date }}) > 8,
     1,0
   )
+
+  return(fiscYear)
 
 }
 
@@ -41,7 +43,9 @@ fiscYearFromDate <- function(date) {
 
 schToFiscalYear <- function(schYear) {
 
-  as.numeric(stringr::str_sub({{ schYear }}, 5,6)) + 2000
+  schYear <- as.numeric(stringr::str_sub({{ schYear }}, 5,6)) + 2000
+
+  return(schYear)
 
 }
 
@@ -61,10 +65,12 @@ schYearFromDate <- function(date) {
 
   fiscTempura <- fiscYearFromDate(date)
 
-  sprintf(
+  schYear <- sprintf(
     'SY%s%s',
     stringr::str_pad(fiscTempura%%100-1,2,pad='0'),
     stringr::str_pad(fiscTempura%%100,2,pad='0')
   )
+
+  return(schYear)
 
 }

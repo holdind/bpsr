@@ -12,11 +12,13 @@ NULL
 #' @export
 
 kinderNumToStr <- function(vector) {
-  ifelse(
+  strVector <- ifelse(
     vector < 1,
     sprintf('K%s',vector+2),
     stringr::str_pad(vector,2,pad = '0')
   )
+
+  return(strVector)
 }
 
 #' Convert a character grade vector to a numeric grade vector
@@ -30,10 +32,12 @@ kinderNumToStr <- function(vector) {
 #' @export
 
 kinderStrToNum <- function(vector) {
-  ifelse(
+  numVector <- ifelse(
     grepl('K',vector),
     as.numeric(stringr::str_sub(vector,2,2))-2,
     as.numeric(vector)
   )
+
+  return(numVector)
 }
 
