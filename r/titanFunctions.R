@@ -45,7 +45,7 @@ sepMultipleInventory <- function(df, var) {
   varName <- deparse(substitute(var))
 
   returnDF <- df %>%
-    mutate(totSplits = stringr::str_count({{ var }},'&')) %>%
+    dplyr::mutate(totSplits = stringr::str_count({{ var }},'&')) %>%
     separate({{ var }}, into = paste0('var',seq(1:max(.$totSplits)+1)),sep= ' & ') %>%
     pivot_longer(
       cols = paste0('var',seq(1:max(.$totSplits)+1)),
@@ -314,7 +314,7 @@ titanImportEditCheck <- function(inFile) {
     rvest::html_nodes("table") %>%
     map_df(~rvest::html_table(.x, header = FALSE)) %>%
     set_names(colNames) %>%
-    mutate(
+    dplyr::mutate(
       headerRow = ifelse(assistanceProgram == 'Assistance Program',1,0),
       matchID = cumsum(headerRow)
     ) 
@@ -336,7 +336,7 @@ titanImportEditCheck <- function(inFile) {
   htmlSubheadings <- rvest::html_nodes(html, '.sub-heading')
   subheading <- as.data.frame(rvest::html_text(htmlSubheadings)) %>%
     dplyr::rename(var = 1) %>%
-    tidyr::separate(var, into = c('building','attendanceFactor'), sep = '\\(') %>%
+    tidyr::separate(var, into = c('building','attendanceFactor'), sep = "\\(Attendance Factor ", extra = "merge") %>%
     dplyr::mutate(
       building = stringr::str_trim(building),
       attendanceFactor = as.numeric(gsub('[^0-9.]','',attendanceFactor))/100,
