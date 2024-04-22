@@ -94,27 +94,27 @@ sepQuantAndUnit <- function(df, var, nameTotal, nameUnits) {
 #'
 #' This function imports an HTML cash reconciliation report and converts it to a
 #' csv
-#' 
+#'
 #' @param inFile the path to the input file
 #' @return creates a csv file in the same directory as the html file
 #' @export
 
 titanConvertCashRec <- function(inFile) {
-  
+
   outFile <- titanImportCashRec(inFile)
-  
+
   outFileDir <- sprintf(
     '%s.csv',
     tools::file_path_sans_ext(inFile)
   )
-  
+
   write.csv(
     outFile,
     outFileDir,
     na = '',
     row.names = F
   )
-  
+
 }
 
 #' Convert an HTML Edit Check Report to a CSV in the same directory
@@ -231,27 +231,27 @@ titanConvertWHTransfers <- function(inFile) {
 
 titanImportCashRec <- function(inFile) {
   # Import cash reconciliation data - eventually, we'll add this to BPSR
-  
+
   titanColNames <- c(
     'date', 'prepaidAccountChanges', 'onlinePayments', 'nonCashAdjustments',
     'cashExpected', 'cashRefund', 'cashTotal', 'cashReceived', 'checksReceived',
     'cashAndChecksTotal', 'overShort'
   )
-  
+
   html <- rvest::read_html(inFile)
-  
+
   # This takes all of the html tables and cobbles them together into a single data
   # frame
-  
+
   tables <- html %>%
     rvest::html_nodes('table') %>%
     map_df(~rvest::html_table(.x,header=F)) %>%
     set_names(titanColNames)
-  
+
   # This prepares the data set by flagging rows with the school name in them, then
   # creates a running matchID column that will allow us to match school name in
   # later. It also drops data from a summary table at the end of the HTML report.
-  
+
   df1 <- tables %>%
     dplyr::mutate(
       headerCol = ifelse(
@@ -260,10 +260,10 @@ titanImportCashRec <- function(inFile) {
       matchID = cumsum(headerCol)
     ) %>%
     filter(!is.na(cashExpected))
-  
+
   # school names are built into the first of 2 header rows. This table extract
   # them to merge onto the rows below.
-  
+
   schNameMatch <- df1 %>%
     dplyr::filter(headerCol==1) %>%
     dplyr::select(date,matchID) %>%
@@ -271,12 +271,12 @@ titanImportCashRec <- function(inFile) {
     dplyr::mutate(
       building = stringr::str_trim(building)
     )
-  
+
   # This final block merges in school names, moves them to the front of the data
   # frame, drops variables created for this process, drops header column rows, and
   # then, finally, converts our string dollar values into numeric & date into
   # POSIXct
-  
+
   dfFin <- df1 %>%
     left_join(schNameMatch, by = 'matchID') %>%
     relocate(buildingID, building) %>%
@@ -286,9 +286,9 @@ titanImportCashRec <- function(inFile) {
       date = as.POSIXct(date, format = "%m/%d/%Y", tz = 'UTC'),
       across(prepaidAccountChanges:overShort, ~ as.numeric(gsub('[\\$,]','',.)))
     )
-  
+
   return(dfFin)
-  
+
 }
 
 #' Import a Titan Edit Check Report
@@ -301,13 +301,13 @@ titanImportCashRec <- function(inFile) {
 #' @export
 
 titanImportEditCheck <- function(inFile) {
-  
+
   colNames <- c(
     'date', 'assistanceProgram', 'totalEligible', 'totEligibleTimesAF', 'totalClaims'
   )
-  
+
   html <- rvest::read_html(inFile)
-  
+
   # Extract data in tables, create match values by flagging header lines and
   # running a cumsum over them
   tables <- html %>%
@@ -317,20 +317,20 @@ titanImportEditCheck <- function(inFile) {
     dplyr::mutate(
       headerRow = ifelse(assistanceProgram == 'Assistance Program',1,0),
       matchID = cumsum(headerRow)
-    ) 
-  
+    )
+
   mealTypeDF <- tables %>%
-    filter(headerRow==1) %>% 
-    select(matchID,date) %>% 
+    filter(headerRow==1) %>%
+    select(matchID,date) %>%
     rename(program = date)
-  
+
   tables2 <- tables %>%
     filter(
       !(assistanceProgram %in% c('Total','Assistance Program')),
       !is.na(totalEligible)
-    ) %>% 
+    ) %>%
     left_join(mealTypeDF, by = 'matchID')
-  
+
   # Extract school name & attendance factor from the html subheadings, then attach
   # a value to match them to tables
   htmlSubheadings <- rvest::html_nodes(html, '.sub-heading')
@@ -342,19 +342,19 @@ titanImportEditCheck <- function(inFile) {
       attendanceFactor = as.numeric(gsub('[^0-9.]','',attendanceFactor))/100,
       matchID = row_number()
     )
-  
+
   # merge and fix data types
   finalOut <- tables2 %>%
     dplyr::left_join(subheading, by = 'matchID') %>%
     dplyr::mutate_at(vars(totalEligible:totalClaims), as.numeric) %>%
     dplyr::mutate(
-      date = as.POSIXct(date,format = '%m/%d/%Y')
+      date = as.POSIXct(date,format = '%m/%d/%Y', tz = 'UTC')
     ) %>%
     dplyr::relocate(building,program,attendanceFactor) %>%
     dplyr::select(-c(headerRow,matchID))
-  
+
   return(finalOut)
-  
+
 }
 
 #' Import a Titan HTML report
@@ -439,7 +439,7 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
   if(any(grepl('date',htmlListVars))) {
     listMerge <- listMerge %>%
       dplyr::mutate(
-        date = as.POSIXct(date, format = "%A, %B %d, %Y")
+        date = as.POSIXct(date, format = "%A, %B %d, %Y", tz = 'UTC')
       )
   }
 
