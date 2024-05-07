@@ -84,7 +84,7 @@ bpsScheduleDates <- function(startYear=NA,endYear=NA) {
     ) %>%
     tidyr::uncount(range) %>%
     dplyr::mutate(
-      date = start+row_number()*posixDayLength-posixDayLength,
+      date = start+dplyr::row_number()*posixDayLength-posixDayLength,
       dow = weekdays(date)
     ) %>%
     dplyr::select(fiscYear,date,dow) %>%
