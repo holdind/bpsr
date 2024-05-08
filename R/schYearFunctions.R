@@ -117,7 +117,7 @@ bpsMonthDateCount <- function(startYear=NA,endYear=NA) {
   df = scheduleData %>%
     dplyr::mutate(month = yyyymmString(date)) %>%
     dplyr::group_by(fiscYear,month) %>%
-    dplyr::summarise(totalDays = n())
+    dplyr::summarise(totalDays = dplyr::n())
 
   return(df)
 
