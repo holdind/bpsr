@@ -90,6 +90,26 @@ sepQuantAndUnit <- function(df, var, nameTotal, nameUnits) {
 
 }
 
+#' Convert a Titan building name into a school name and its constituent ID
+#'
+#' We updated titan building names to contain IDs behind a # mark. This code
+#' splits the Titan IDs into a building name and a school code
+#' 
+#' @param df A Titan report containing a building variable
+#' @param var The variable containing the Titan school names
+#' @return a data frame with the school ID separated from the school name
+#' @export
+
+splitNameAndID <- function(df,var) {
+  
+  returnDF <- df %>% 
+    tidyr::separate({{ var }}, into = c('building','buildingID'), sep = '#') %>% 
+    dplyr::mutate(building = stringr::str_trim(building))
+  
+  return(returnDF)
+  
+}
+
 #' Convert a daily cash reconcilation report to a csv in the same directory
 #'
 #' This function imports an HTML cash reconciliation report and converts it to a
@@ -285,7 +305,8 @@ titanImportCashRec <- function(inFile) {
     dplyr::mutate(
       date = as.POSIXct(date, format = "%m/%d/%Y", tz = 'UTC'),
       across(prepaidAccountChanges:overShort, ~ as.numeric(gsub('[\\$,]','',.)))
-    )
+    ) %>% 
+    splitNameAndID('building')
 
   return(dfFin)
 
@@ -351,7 +372,8 @@ titanImportEditCheck <- function(inFile) {
       date = as.POSIXct(date,format = '%m/%d/%Y', tz = 'UTC')
     ) %>%
     dplyr::relocate(building,program,attendanceFactor) %>%
-    dplyr::select(-c(headerRow,matchID))
+    dplyr::select(-c(headerRow,matchID)) %>% 
+    splitNameAndID(building)
 
   return(finalOut)
 
@@ -382,7 +404,7 @@ titanImportHTML <- function(inFile) {
 #'
 #' @param inFile The path to a saved Titan Production Records Report
 #' @param htmlListVars A vector containing the variables that you grouped the
-#'   production records by
+#'   production records by. must be variables like "school" and "date"
 #' @return a data frame containing the content of a Production records report
 #' @export
 
@@ -457,6 +479,12 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
     dplyr::left_join(listMerge, by = 'id') %>%
     dplyr::select(date,school,everything(),-c(counter,id)) %>%
     dplyr::mutate_at(vars(plannedReimbursable:productionCost), ~ as.numeric(gsub("[,$%]", "", .)))
+  
+  if(any(grepl('school',htmlListVars))) {
+    df <- df %>% 
+      splitNameAndID(school) %>% 
+      rename(school = building)
+  }
 
   return(df)
 
@@ -507,6 +535,16 @@ titanImportWHTransfers <- function(inFile) {
     ) %>%
     select(
       -internalHeader,-idGrouping
+    ) %>% 
+    splitNameAndID(receivingBuilding) %>% 
+    rename(
+      receivingBuilding = building,
+      receivingID = buildingID
+    ) %>% 
+    splitNameAndID(fulfillmentBuilding) %>% 
+    rename(
+      fulfillmentBuilding = building,
+      fulfillmentID = buildingID
     )
 
   return(df)

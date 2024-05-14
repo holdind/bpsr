@@ -10,7 +10,7 @@ titanImportProdRecs(inFile, htmlListVars = c("school", "date"))
 \item{inFile}{The path to a saved Titan Production Records Report}
 
 \item{htmlListVars}{A vector containing the variables that you grouped the
-production records by}
+production records by. must be variables like "school" and "date"}
 }
 \value{
 a data frame containing the content of a Production records report
