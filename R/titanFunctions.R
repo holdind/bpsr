@@ -5,6 +5,7 @@
 # into keys
 
 #' @import tidyverse tools janitor rvest
+#' @importFrom magrittr %>%
 NULL
 
 #' Remove DISCONTINUED string from the Identifier column
@@ -121,7 +122,7 @@ splitNameAndID <- function(df,var) {
 
 titanConvertCashRec <- function(inFile) {
 
-  outFile <- bpsr::titanImportCashRec(inFile)
+  outFile <- titanImportCashRec(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -147,7 +148,7 @@ titanConvertCashRec <- function(inFile) {
 
 titanConvertEditCheck <- function(inFile) {
 
-  outFile <- bpsr::titanImportEditCheck(inFile)
+  outFile <- titanImportEditCheck(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -172,7 +173,7 @@ titanConvertEditCheck <- function(inFile) {
 #' @export
 
 titanConvertHTML <-  function(inFile) {
-  outFile <- bpsr::TitanImportHTML(inFile)
+  outFile <- titanImportHTML(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -198,7 +199,7 @@ titanConvertHTML <-  function(inFile) {
 
 titanConvertProdRecs <- function(inFile,htmlListVars=c('school','date')) {
 
-  outFile <- bpsr::titanImportProdRecs(inFile,htmlListVars)
+  outFile <- titanImportProdRecs(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -223,7 +224,7 @@ titanConvertProdRecs <- function(inFile,htmlListVars=c('school','date')) {
 #' @export
 
 titanConvertWHTransfers <- function(inFile) {
-  outFile <- bpsr::titanImportWHTransfers(inFile)
+  outFile <- titanImportWHTransfers(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
