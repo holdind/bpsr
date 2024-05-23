@@ -94,20 +94,20 @@ sepQuantAndUnit <- function(df, var, nameTotal, nameUnits) {
 #'
 #' We updated titan building names to contain IDs behind a # mark. This code
 #' splits the Titan IDs into a building name and a school code
-#' 
+#'
 #' @param df A Titan report containing a building variable
 #' @param var The variable containing the Titan school names
 #' @return a data frame with the school ID separated from the school name
 #' @export
 
 splitNameAndID <- function(df,var) {
-  
-  returnDF <- df %>% 
-    tidyr::separate({{ var }}, into = c('building','buildingID'), sep = '#') %>% 
+
+  returnDF <- df %>%
+    tidyr::separate({{ var }}, into = c('building','buildingID'), sep = '#') %>%
     dplyr::mutate(building = stringr::str_trim(building))
-  
+
   return(returnDF)
-  
+
 }
 
 #' Convert a daily cash reconcilation report to a csv in the same directory
@@ -121,7 +121,7 @@ splitNameAndID <- function(df,var) {
 
 titanConvertCashRec <- function(inFile) {
 
-  outFile <- titanImportCashRec(inFile)
+  outFile <- bpsr::titanImportCashRec(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -147,7 +147,7 @@ titanConvertCashRec <- function(inFile) {
 
 titanConvertEditCheck <- function(inFile) {
 
-  outFile <- titanImportEditCheck(inFile)
+  outFile <- bpsr::titanImportEditCheck(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -172,7 +172,7 @@ titanConvertEditCheck <- function(inFile) {
 #' @export
 
 titanConvertHTML <-  function(inFile) {
-  outFile <- titanImportHTML(inFile)
+  outFile <- bpsr::TitanImportHTML(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -198,7 +198,7 @@ titanConvertHTML <-  function(inFile) {
 
 titanConvertProdRecs <- function(inFile,htmlListVars=c('school','date')) {
 
-  outFile <- titanImportProdRecs(inFile)
+  outFile <- bpsr::titanImportProdRecs(inFile,htmlListVars)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -223,7 +223,7 @@ titanConvertProdRecs <- function(inFile,htmlListVars=c('school','date')) {
 #' @export
 
 titanConvertWHTransfers <- function(inFile) {
-  outFile <- cleanWHTransfers(inFile)
+  outFile <- bpsr::titanImportWHTransfers(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -305,7 +305,7 @@ titanImportCashRec <- function(inFile) {
     dplyr::mutate(
       date = as.POSIXct(date, format = "%m/%d/%Y", tz = 'UTC'),
       across(prepaidAccountChanges:overShort, ~ as.numeric(gsub('[\\$,]','',.)))
-    ) %>% 
+    ) %>%
     splitNameAndID('building')
 
   return(dfFin)
@@ -372,7 +372,7 @@ titanImportEditCheck <- function(inFile) {
       date = as.POSIXct(date,format = '%m/%d/%Y', tz = 'UTC')
     ) %>%
     dplyr::relocate(building,program,attendanceFactor) %>%
-    dplyr::select(-c(headerRow,matchID)) %>% 
+    dplyr::select(-c(headerRow,matchID)) %>%
     splitNameAndID(building)
 
   return(finalOut)
@@ -479,10 +479,10 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
     dplyr::left_join(listMerge, by = 'id') %>%
     dplyr::select(date,school,everything(),-c(counter,id)) %>%
     dplyr::mutate_at(vars(plannedReimbursable:productionCost), ~ as.numeric(gsub("[,$%]", "", .)))
-  
+
   if(any(grepl('school',htmlListVars))) {
-    df <- df %>% 
-      splitNameAndID(school) %>% 
+    df <- df %>%
+      splitNameAndID(school) %>%
       rename(school = building)
   }
 
@@ -535,13 +535,13 @@ titanImportWHTransfers <- function(inFile) {
     ) %>%
     select(
       -internalHeader,-idGrouping
-    ) %>% 
-    splitNameAndID(receivingBuilding) %>% 
+    ) %>%
+    splitNameAndID(receivingBuilding) %>%
     rename(
       receivingBuilding = building,
       receivingID = buildingID
-    ) %>% 
-    splitNameAndID(fulfillmentBuilding) %>% 
+    ) %>%
+    splitNameAndID(fulfillmentBuilding) %>%
     rename(
       fulfillmentBuilding = building,
       fulfillmentID = buildingID
