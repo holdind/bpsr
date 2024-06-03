@@ -191,6 +191,46 @@ schYearFromDate <- function(date) {
 
 }
 
+#' Take one of Dane's collapsed year tables that needs to be expanded to merge,
+#' and expands it
+#'
+#' When Dane maintains tables, he likes to keep them fairly simple to maintain.
+#' For example, when he's tracking something that might change per annum, he
+#' likes to build tables with two year columns, one for the initial year that
+#' the assigned status occurs and one year for the final year of the status. If
+#' the second year is empty, it means that the status is still current. This
+#' algorithm takes these condensed tables and converts them into long form
+#' tables that can be merged on a fiscal year variable.
+#'
+#' @param condensedDF This is a data frame like the one described above, where a
+#'   status is assigned to an entity by year, but the table is maintained such
+#'   that there is an initial year and final year column.
+#' @param startYearVar The variable containing the initial year of the status
+#' @param endYearVar The variable containin the final year of the status
+
+tableExpanderByYear <- function(condensedDF,startYearVar,endYearVar) {
+  
+  # if a year value is empty in the right column, then it should be filled with
+  # the current fiscal year. To do this, we'll calculate the current fiscal year
+  # using the BPSR function on Sys.Date()
+  currYear <- bpsr::fiscYearFromDate(Sys.Date())
+  
+  finalDF <- condensedDF %>% 
+    dplyr::mutate(
+      {{ endYearVar }} := ifelse(is.na({{ endYearVar }}), currYear ,{{ endYearVar }}),
+      expansionID = dplyr::row_number(),
+      expansionVal = {{ endYearVar }}-{{ startYearVar }}+1
+    ) %>% 
+    tidyr::uncount(expansionVal) %>% 
+    dplyr::group_by(expansionID) %>% 
+    dplyr::mutate(fiscalYear = {{ startYearVar }} + dplyr::row_number()-1) %>% 
+    dplyr::ungroup() %>% 
+    select(-c({{ startYearVar }},{{ endYearVar }},expansionID))
+  
+  return(finalDF)
+}
+
+
 #' Build a date string formated YYYYMMDD
 #'
 #' This function returns a date string formatted YYYYMMDD for use in file
