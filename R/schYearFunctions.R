@@ -207,27 +207,29 @@ schYearFromDate <- function(date) {
 #'   that there is an initial year and final year column.
 #' @param startYearVar The variable containing the initial year of the status
 #' @param endYearVar The variable containin the final year of the status
+#' @export
 
 tableExpanderByYear <- function(condensedDF,startYearVar,endYearVar) {
-  
+
   # if a year value is empty in the right column, then it should be filled with
   # the current fiscal year. To do this, we'll calculate the current fiscal year
   # using the BPSR function on Sys.Date()
-  currYear <- bpsr::fiscYearFromDate(Sys.Date())
-  
-  finalDF <- condensedDF %>% 
+  currYear <- fiscYearFromDate(Sys.Date())
+
+  finalDF <- condensedDF %>%
     dplyr::mutate(
       {{ endYearVar }} := ifelse(is.na({{ endYearVar }}), currYear ,{{ endYearVar }}),
       expansionID = dplyr::row_number(),
       expansionVal = {{ endYearVar }}-{{ startYearVar }}+1
-    ) %>% 
-    tidyr::uncount(expansionVal) %>% 
-    dplyr::group_by(expansionID) %>% 
-    dplyr::mutate(fiscalYear = {{ startYearVar }} + dplyr::row_number()-1) %>% 
-    dplyr::ungroup() %>% 
+    ) %>%
+    tidyr::uncount(expansionVal) %>%
+    dplyr::group_by(expansionID) %>%
+    dplyr::mutate(fiscalYear = {{ startYearVar }} + dplyr::row_number()-1) %>%
+    dplyr::ungroup() %>%
     select(-c({{ startYearVar }},{{ endYearVar }},expansionID))
-  
+
   return(finalDF)
+
 }
 
 
