@@ -239,6 +239,83 @@ titanConvertWHTransfers <- function(inFile) {
   )
 }
 
+#' Make specific adjustments to an Edit Check File's attendance and enrollment
+#' and adjusts some school data.
+#'
+#' This function adjusts enrollment and attendance on an Edit Check report. Some
+#' schools also need to have their meals assigned to other schools, and this
+#' does that as well. It uses a couple of tables in my GitHub to accomplish
+#' this, then adjusts some values throughout the EC report based on the values
+#' of those tables.
+#'
+#' @param ec an edit check report being imported to R
+#' @return an edit check report with attendance values properly adjusted and
+#'   school designations appropriately aligned
+#' @export
+
+titanEditCheckAFCleaner <- function(ec) {
+  
+  gitHubAdjustments <- 'https://raw.githubusercontent.com/holdind/bpsr/main/data/titanAttendanceEnrollmentCorrection.csv'
+  gitHubSchoolAligners <- 'https://raw.githubusercontent.com/holdind/bpsr/main/data/titanSchoolAligner.csv'
+  
+  supTAEAdjustments <- readr::read_csv(gitHubAdjustments, col_types='ddccdd') %>% 
+    bpsr::tableExpanderByYear(startYear,endYear) %>% 
+    dplyr::select(-schname)
+  
+  supTSchAligner <- readr::read_csv(gitHubSchoolAligners, col_types='ddcccc') %>% 
+    bpsr::tableExpanderByYear(startYear,endYear) %>% 
+    dplyr::select(-c(schname,newSchname))
+  
+  ec <- ec %>% 
+    dplyr::mutate(
+      month = str_remove(bpsr::yyyymmString(date),"\\-"),
+      fiscalYear = bpsr::fiscYearFromDate(date)
+    ) 
+  
+  # Merge in and correct 
+  ec2 <- ec %>% 
+    dplyr::left_join(
+      supTSchAligner,
+      by = c('fiscalYear','buildingID'='id')
+    ) %>% 
+    dplyr::mutate(
+      building = ifelse(!is.na(newID)&newID!=buildingID,NA,building),
+      buildingID = ifelse(is.na(newID),buildingID,newID)
+    ) %>% 
+    dplyr::group_by(fiscalYear,buildingID,date,program) %>% 
+    dplyr::mutate(
+      totalEligible = sum(totalEligible),
+      totEligibleTimesAF = sum(totEligibleTimesAF),
+      dayFraction = 1/n()
+    ) %>% 
+    # fix building codes
+    dplyr::group_by(fiscalYear,buildingID) %>% 
+    dplyr::mutate(building = max(building,na.rm=T))
+  
+  # Sum up the claims, enrollment, attendance over the course of the month
+  ec3 <- ec2 %>% 
+    dplyr::group_by(fiscalYear,buildingID,building,date,program) %>% 
+    dplyr::summarise(
+      totalClaims = sum(totalClaims),
+      enrollment = max(totalEligible),
+      attendance = max(totEligibleTimesAF)
+    ) %>% 
+    dplyr::ungroup()
+  
+  # Corrects enrollment and attendance by overriding it in some spot
+  ec4 <- ec3 %>% 
+    dplyr::left_join(supTAEAdjustments, by = c('fiscalYear','buildingID' = 'id')) %>% 
+    dplyr::mutate(
+      attendance = ifelse(is.na(addToAttendance),attendance,attendance+addToAttendance),
+      enrollment = ifelse(is.na(addToEnrollment),enrollment,enrollment+addToEnrollment)
+    ) %>% 
+    dplyr::select(-c(addToEnrollment,addToAttendance))
+  
+  return(ec4)
+  
+}
+
+
 #' Convert an HTML daily cash reconciliation report from Titan into an R Data
 #' frame
 #'

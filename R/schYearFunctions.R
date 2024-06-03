@@ -207,6 +207,8 @@ schYearFromDate <- function(date) {
 #'   that there is an initial year and final year column.
 #' @param startYearVar The variable containing the initial year of the status
 #' @param endYearVar The variable containin the final year of the status
+#' @return a longform table with each interstitial year that can be merged into
+#'   an existing report
 #' @export
 
 tableExpanderByYear <- function(condensedDF,startYearVar,endYearVar) {

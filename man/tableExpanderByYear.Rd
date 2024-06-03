@@ -16,6 +16,10 @@ that there is an initial year and final year column.}
 
 \item{endYearVar}{The variable containin the final year of the status}
 }
+\value{
+a longform table with each interstitial year that can be merged into
+  an existing report
+}
 \description{
 When Dane maintains tables, he likes to keep them fairly simple to maintain.
 For example, when he's tracking something that might change per annum, he
