@@ -44,7 +44,7 @@ fnsCoordList = function() {
 
 fnsCoordListCurrent = function() {
 
-  df <- coordList() %>%
+  df <- fnsCoordList() %>%
     dplyr::group_by(deseID,titanID) %>%
     dplyr::filter(date == max(date)) %>%
     dplyr::ungroup()
