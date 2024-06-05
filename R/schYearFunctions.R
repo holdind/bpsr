@@ -4,7 +4,14 @@
 # also use it to fix the terrible practice of building the word DISCONTINUED
 # into keys
 
-#' @import lubridate stringr RCurl tidyverse
+#' @importFrom dplyr anti_join filter group_by mutate n row_number select
+#'   summarise ungroup
+#' @importFrom lubridate day days month year
+#' @importFrom magrittr %>%
+#' @importFrom readr read_csv
+#' @importFrom stringr str_pad str_remove str_sub
+#' @importFrom tidyr uncount
+
 NULL
 
 
@@ -20,9 +27,9 @@ NULL
 
 bpsSchedDaysOff <- function() {
 
-  githubDir <- RCurl::getURL('https://raw.githubusercontent.com/holdind/bpsr/main/data/bpsHolidays.csv')
+  githubDir <- 'https://raw.githubusercontent.com/holdind/bpsr/main/data/bpsHolidays.csv'
 
-  daysOff <- read.csv(text = githubDir) %>%
+  daysOff <- readr::read_csv(githubDir,col_types='cc') %>%
     dplyr::mutate(date = as.POSIXct(date,format = '%m/%d/%Y', tz = 'UTC'))
 
   return(daysOff)
@@ -47,7 +54,7 @@ bpsSchedDaysOff <- function() {
 
 bpsScheduleDates <- function(startYear=NA,endYear=NA) {
 
-  githubDir <- RCurl::getURL('https://raw.githubusercontent.com/holdind/bpsr/main/data/bpsCalendarLengths.csv')
+  githubDir <- 'https://raw.githubusercontent.com/holdind/bpsr/main/data/bpsCalendarLengths.csv'
   posixDayLength = 60*60*24
 
   # drop days off
@@ -56,7 +63,7 @@ bpsScheduleDates <- function(startYear=NA,endYear=NA) {
   # drop weekends
   weekend <- c('Saturday','Sunday')
 
-  baseDF <- read.csv(text = githubDir)
+  baseDF <- readr::read_csv(githubDir,col_types='dcc')
 
   if(!is.na(startYear)) {
     if(!is.na(endYear)) {
