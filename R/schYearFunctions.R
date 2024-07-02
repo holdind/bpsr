@@ -90,13 +90,15 @@ bpsScheduleDates <- function(startYear=NA,endYear=NA) {
       range = as.numeric(end-start+1)
     ) %>%
     tidyr::uncount(range) %>%
+    group_by(fiscYear) %>% 
     dplyr::mutate(
       date = start+dplyr::row_number()*posixDayLength-posixDayLength,
       dow = weekdays(date)
     ) %>%
+    ungroup() %>% 
     dplyr::select(fiscYear,date,dow) %>%
     dplyr::filter(!(dow %in% weekend)) %>%
-    dplyr::anti_join(daysOff, by = 'date')
+    dplyr::anti_join(daysOff, by = 'date') 
 
   return(df)
 
