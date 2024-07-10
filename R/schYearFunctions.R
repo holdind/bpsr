@@ -146,7 +146,7 @@ bpsMonthDateCount <- function(startYear=NA,endYear=NA) {
 fiscYearFromDate <- function(date) {
 
   fiscYear <- lubridate::year({{ date }}) + ifelse(
-    lubridate::month({{ date }}) > 8,
+    lubridate::month({{ date }}) > 6,
     1,0
   )
 
