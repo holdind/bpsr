@@ -1,4 +1,4 @@
-#' @import stringr
+#' @importFrom stringr str_pad str_sub
 NULL
 
 #' Convert a numeric grade vector to a character grade vector

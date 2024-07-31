@@ -4,7 +4,11 @@
 # also use it to fix the terrible practice of building the word DISCONTINUED
 # into keys
 
-#' @import tidyverse janitor
+#' @importFrom dplyr mutate rename_all select
+#' @importFrom janitor clean_names
+#' @importFrom plyr rbind.fill
+#' @importFrom readxl excel_sheets read_excel
+#' @importFrom stringr str_sub str_to_lower str_to_upper
 NULL
 
 #' Corrects invoice codes, since Ace Endico can't seem to do it themselves.
@@ -86,7 +90,7 @@ loadEndicoReports <- function(directory) {
 
     aeFile <- readxl::read_excel(aeFileDir, sheet = aeSheetList[1]) %>%
       janitor::clean_names(case='lower_camel') %>%
-      mutate(report = f)
+      dplyr::mutate(report = f)
 
 
     # Read in all of the allowance sheets, add their color, and then add them to
@@ -105,19 +109,19 @@ loadEndicoReports <- function(directory) {
 
       aeAllowanceSheet = readxl::read_excel(aeFileDir, sheet = sheet) %>%
         janitor::clean_names(case='lower_camel') %>%
-        mutate(color = allowanceColor)
+        dplyr::mutate(color = allowanceColor)
 
       if(allowanceColor %in% c('blue','orange','yellow')) {
 
         aeAllowanceSheet <- aeAllowanceSheet %>%
-          rename_all(~byoColNames) %>%
+          dplyr::rename_all(~byoColNames) %>%
           janitor::clean_names(case='lower_camel') %>%
-          select(-dropMe)
+          dplyr::select(-dropMe)
 
       } else if (allowanceColor %in% c('red','green')) {
 
         aeAllowanceSheet <- aeAllowanceSheet %>%
-          mutate(
+          dplyr::mutate(
             discount = discount * -1,
             discountPerCase = discount/qty
           )

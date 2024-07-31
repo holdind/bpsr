@@ -4,8 +4,17 @@
 # also use it to fix the terrible practice of building the word DISCONTINUED
 # into keys
 
-#' @import tidyverse tools janitor rvest
-#' @importFrom magrittr %>%
+#' @importFrom dplyr filter group_by left_join lag mutate mutate_at relocate
+#'   rename row_number select summarise ungroup
+#' @importFrom janitor clean_names
+#' @importFrom magrittr %>% set_names
+#' @importFrom purrr map_df
+#' @importFrom readr read_csv
+#' @importFrom rvest html_nodes html_table html_text read_html
+#' @importFrom stringr str_count str_extract str_trim
+#' @importFrom tidyr pivot_longer pivot_wider separate
+#' @importFrom tools file_path_sans_ext
+#'
 NULL
 
 #' Remove DISCONTINUED string from the Identifier column
@@ -30,7 +39,7 @@ removeDiscontinued <- function(vector) {
 #'
 #' Titan designs some of its reports, most notably the purchasing report, to
 #' list units and cases in the same line item. In order to get around this
-#' convetion, this command will split those items and produce separate line
+#' convention, this command will split those items and produce separate line
 #' items, one for ases, and one for units.
 #'
 #' @param df A Titan report containing lines with units and cases listed
@@ -47,13 +56,13 @@ sepMultipleInventory <- function(df, var) {
 
   returnDF <- df %>%
     dplyr::mutate(totSplits = stringr::str_count({{ var }},'&')) %>%
-    separate({{ var }}, into = paste0('var',seq(1:max(.$totSplits)+1)),sep= ' & ') %>%
-    pivot_longer(
+    tidyr::separate({{ var }}, into = paste0('var',seq(1:max(.$totSplits)+1)),sep= ' & ') %>%
+    tidyr::pivot_longer(
       cols = paste0('var',seq(1:max(.$totSplits)+1)),
       values_to = varName,
       values_drop_na = T
     ) %>%
-    select(-totSplits,-name)
+    dplyr::select(-totSplits,-name)
 
   return(returnDF)
 
@@ -80,12 +89,12 @@ sepQuantAndUnit <- function(df, var, nameTotal, nameUnits) {
   strUnits <- deparse(substitute(nameUnits))
 
   returnDF <- df %>%
-    separate(
+    tidyr::separate(
       {{ var }}, into = c(strTotal,strUnits),
       extra = 'merge',
       sep = ' '
     ) %>%
-    mutate({{ nameTotal }} := as.numeric({{ nameTotal }}))
+    dplyr::mutate({{ nameTotal }} := as.numeric({{ nameTotal }}))
 
   return(returnDF)
 
@@ -254,65 +263,65 @@ titanConvertWHTransfers <- function(inFile) {
 #' @export
 
 titanEditCheckAFCleaner <- function(ec) {
-  
+
   gitHubAdjustments <- 'https://raw.githubusercontent.com/holdind/bpsr/main/data/titanAttendanceEnrollmentCorrection.csv'
   gitHubSchoolAligners <- 'https://raw.githubusercontent.com/holdind/bpsr/main/data/titanSchoolAligner.csv'
-  
-  supTAEAdjustments <- readr::read_csv(gitHubAdjustments, col_types='ddccdd') %>% 
-    bpsr::tableExpanderByYear(startYear,endYear) %>% 
+
+  supTAEAdjustments <- readr::read_csv(gitHubAdjustments, col_types='ddccdd') %>%
+    bpsr::tableExpanderByYear(startYear,endYear) %>%
     dplyr::select(-schname)
-  
-  supTSchAligner <- readr::read_csv(gitHubSchoolAligners, col_types='ddcccc') %>% 
-    bpsr::tableExpanderByYear(startYear,endYear) %>% 
+
+  supTSchAligner <- readr::read_csv(gitHubSchoolAligners, col_types='ddcccc') %>%
+    bpsr::tableExpanderByYear(startYear,endYear) %>%
     dplyr::select(-c(schname,newSchname))
-  
-  ec <- ec %>% 
+
+  ec <- ec %>%
     dplyr::mutate(
       month = str_remove(bpsr::yyyymmString(date),"\\-"),
       fiscalYear = bpsr::fiscYearFromDate(date)
-    ) 
-  
-  # Merge in and correct 
-  ec2 <- ec %>% 
+    )
+
+  # Merge in and correct
+  ec2 <- ec %>%
     dplyr::left_join(
       supTSchAligner,
       by = c('fiscalYear','buildingID'='id')
-    ) %>% 
+    ) %>%
     dplyr::mutate(
       building = ifelse(!is.na(newID)&newID!=buildingID,NA,building),
       buildingID = ifelse(is.na(newID),buildingID,newID)
-    ) %>% 
-    dplyr::group_by(fiscalYear,buildingID,date,program) %>% 
+    ) %>%
+    dplyr::group_by(fiscalYear,buildingID,date,program) %>%
     dplyr::mutate(
       totalEligible = sum(totalEligible),
       totEligibleTimesAF = sum(totEligibleTimesAF),
       dayFraction = 1/n()
-    ) %>% 
+    ) %>%
     # fix building codes
-    dplyr::group_by(fiscalYear,buildingID) %>% 
+    dplyr::group_by(fiscalYear,buildingID) %>%
     dplyr::mutate(building = max(building,na.rm=T))
-  
+
   # Sum up the claims, enrollment, attendance over the course of the month
-  ec3 <- ec2 %>% 
-    dplyr::group_by(fiscalYear,buildingID,building,date,program) %>% 
+  ec3 <- ec2 %>%
+    dplyr::group_by(fiscalYear,buildingID,building,date,program) %>%
     dplyr::summarise(
       totalClaims = sum(totalClaims),
       enrollment = max(totalEligible),
       attendance = max(totEligibleTimesAF)
-    ) %>% 
+    ) %>%
     dplyr::ungroup()
-  
+
   # Corrects enrollment and attendance by overriding it in some spot
-  ec4 <- ec3 %>% 
-    dplyr::left_join(supTAEAdjustments, by = c('fiscalYear','buildingID' = 'id')) %>% 
+  ec4 <- ec3 %>%
+    dplyr::left_join(supTAEAdjustments, by = c('fiscalYear','buildingID' = 'id')) %>%
     dplyr::mutate(
       attendance = ifelse(is.na(addToAttendance),attendance,attendance+addToAttendance),
       enrollment = ifelse(is.na(addToEnrollment),enrollment,enrollment+addToEnrollment)
-    ) %>% 
+    ) %>%
     dplyr::select(-c(addToEnrollment,addToAttendance))
-  
+
   return(ec4)
-  
+
 }
 
 
@@ -344,7 +353,7 @@ titanImportCashRec <- function(inFile) {
   tables <- html %>%
     rvest::html_nodes('table') %>%
     map_df(~rvest::html_table(.x,header=F)) %>%
-    set_names(titanColNames)
+    magrittr::set_names(titanColNames)
 
   # This prepares the data set by flagging rows with the school name in them, then
   # creates a running matchID column that will allow us to match school name in
@@ -353,11 +362,11 @@ titanImportCashRec <- function(inFile) {
   df1 <- tables %>%
     dplyr::mutate(
       headerCol = ifelse(
-        row_number() == 1 | lag(date) == 'Total',1,0
+        dplyr::row_number() == 1 | lag(date) == 'Total',1,0
       ),
       matchID = cumsum(headerCol)
     ) %>%
-    filter(!is.na(cashExpected))
+    dplyr::filter(!is.na(cashExpected))
 
   # school names are built into the first of 2 header rows. This table extract
   # them to merge onto the rows below.
@@ -365,7 +374,7 @@ titanImportCashRec <- function(inFile) {
   schNameMatch <- df1 %>%
     dplyr::filter(headerCol==1) %>%
     dplyr::select(date,matchID) %>%
-    separate(date, sep = ':', into = c('buildingID','building')) %>%
+    tidyr::separate(date, sep = ':', into = c('buildingID','building')) %>%
     dplyr::mutate(
       building = stringr::str_trim(building)
     )
@@ -376,8 +385,8 @@ titanImportCashRec <- function(inFile) {
   # POSIXct
 
   dfFin <- df1 %>%
-    left_join(schNameMatch, by = 'matchID') %>%
-    relocate(buildingID, building) %>%
+    dplyr::left_join(schNameMatch, by = 'matchID') %>%
+    dplyr::relocate(buildingID, building) %>%
     dplyr::filter(headerCol == 0 & date!='Date' & date != 'Total') %>%
     dplyr::select(-c(headerCol,matchID)) %>%
     dplyr::mutate(
@@ -411,24 +420,25 @@ titanImportEditCheck <- function(inFile) {
   # running a cumsum over them
   tables <- html %>%
     rvest::html_nodes("table") %>%
-    map_df(~rvest::html_table(.x, header = FALSE)) %>%
-    set_names(colNames) %>%
+    purrr::map_df(~rvest::html_table(.x, header = FALSE))  %>%
+    dplyr::select(1:5) %>%
+    magrittr::set_names(colNames) %>%
     dplyr::mutate(
       headerRow = ifelse(assistanceProgram == 'Assistance Program',1,0),
       matchID = cumsum(headerRow)
     )
 
   mealTypeDF <- tables %>%
-    filter(headerRow==1) %>%
-    select(matchID,date) %>%
-    rename(program = date)
+    dplyr::filter(headerRow==1) %>%
+    dplyr::select(matchID,date) %>%
+    dplyr::rename(program = date)
 
   tables2 <- tables %>%
-    filter(
+    dplyr::filter(
       !(assistanceProgram %in% c('Total','Assistance Program')),
       !is.na(totalEligible)
     ) %>%
-    left_join(mealTypeDF, by = 'matchID')
+    dplyr::left_join(mealTypeDF, by = 'matchID')
 
   # Extract school name & attendance factor from the html subheadings, then attach
   # a value to match them to tables
@@ -439,7 +449,7 @@ titanImportEditCheck <- function(inFile) {
     dplyr::mutate(
       building = stringr::str_trim(building),
       attendanceFactor = as.numeric(gsub('[^0-9.]','',attendanceFactor))/100,
-      matchID = row_number()
+      matchID = dplyr::row_number()
     )
 
   # merge and fix data types
@@ -497,17 +507,17 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
     'leftOverPctOfOffered','leftOverCost','productionCost'
   )
 
-  html <- read_html(inFile)
+  html <- rvest::read_html(inFile)
 
   # Extract tables
   tables <- html %>%
     rvest::html_nodes("table") %>%
-    map_df(~rvest::html_table(.x, header = FALSE))
+    purrr::map_df(~rvest::html_table(.x, header = FALSE))
 
   # Extract unordered lists
   lists <- html %>%
     rvest::html_nodes("ul") %>%
-    map_df(~{
+    purrr::map_df(~{
       # Extract list items
       items <- .x %>%
         rvest::html_nodes("li") %>%
@@ -524,17 +534,17 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
 
   listMerge <- lists %>%
     dplyr::mutate(
-      id = ceiling(row_number()/htmlListVarsTotal)
+      id = ceiling(dplyr::row_number()/htmlListVarsTotal)
     ) %>%
     group_by(id) %>%
     dplyr::mutate(
-      colName = sprintf('v%s',row_number())
+      colName = sprintf('v%s',dplyr::row_number())
     ) %>%
-    pivot_wider(
+    tidyr::pivot_wider(
       names_from = colName,
       values_from = value
     ) %>%
-    set_names(c('id',htmlListVars))
+    magrittr::set_names(c('id',htmlListVars))
 
   if(any(grepl('date',htmlListVars))) {
     listMerge <- listMerge %>%
@@ -544,9 +554,9 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
   }
 
   df <- tables %>%
-    set_names(titanColNames) %>%
+    magrittr::set_names(titanColNames) %>%
     dplyr::mutate(
-      counter = ifelse((lag(identifier) == '' & lag(name) == '') | row_number() == 1,1,0),
+      counter = ifelse((dplyr::lag(identifier) == '' & dplyr::lag(name) == '') | row_number() == 1,1,0),
       id = cumsum(counter)
     ) %>%
     dplyr::filter(
@@ -558,10 +568,17 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
     dplyr::select(date,school,everything(),-c(counter,id)) %>%
     dplyr::mutate_at(vars(plannedReimbursable:productionCost), ~ as.numeric(gsub("[,$%]", "", .)))
 
-  if(any(grepl('school',htmlListVars))) {
+  if(any(test=='school')) {
     df <- df %>%
       splitNameAndID(school) %>%
-      rename(school = building)
+      dplyr::rename(school = building)
+  }
+
+  if(any(test=='date')) {
+    df <- df %>%
+      dplyr::mutate(
+        date = as.POSIXct(date,format = '%m/%d/%Y', tz = 'UTC')
+      )
   }
 
   return(df)
@@ -580,7 +597,7 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
 
 titanImportWHTransfers <- function(inFile) {
   step1 <- titanImportHTML(inFile) %>%
-    mutate(
+    dplyr::mutate(
       internalHeader = ifelse(
         expectedDate == quantity,1,0
       ),
@@ -588,39 +605,40 @@ titanImportWHTransfers <- function(inFile) {
     )
 
   idTable <- step1 %>%
-    filter(internalHeader == 1) %>%
-    select(idGrouping,receivingBuilding) %>%
-    rename(headerString = receivingBuilding) %>%
-    mutate(
-      identifier = str_extract(headerString,'\\(([^)]+)\\)'),
+    dplyr::filter(internalHeader == 1) %>%
+    dplyr::select(idGrouping,receivingBuilding) %>%
+    dplyr::rename(headerString = receivingBuilding) %>%
+    dplyr::mutate(
+      identifier = stringr::str_extract(headerString,'\\(([^)]+)\\)'),
       identifier = removeDiscontinued(identifier),
-      identifier = str_trim(gsub('[[:punct:] ]+','',identifier)),
+      identifier = stringr::str_trim(gsub('[[:punct:] ]+','',identifier)),
 
       product = sub('.*?\\)','',headerString),
       product = sub('^\\)','',product),
       product = stringr::str_trim(product),
 
-    ) %>% select(-headerString)
+    ) %>%
+    dplyr::select(-headerString)
 
   df <- step1 %>%
-    filter(internalHeader == 0) %>%
-    left_join(
+    dplyr::filter(internalHeader == 0) %>%
+    dplyr::left_join(
       idTable, by = 'idGrouping'
     ) %>%
-    mutate(
+    dplyr::mutate(
       expectedDate = as.POSIXct(expectedDate, format = '%b %d, %Y', tz = 'UTC'),
       quantity = as.numeric(quantity)
     ) %>%
-    select(
+    dplyr::select(
       -internalHeader,-idGrouping
     ) %>%
     splitNameAndID(receivingBuilding) %>%
-    rename(
+    dplyr::rename(
       receivingBuilding = building,
       receivingID = buildingID
     ) %>%
     splitNameAndID(fulfillmentBuilding) %>%
-    rename(
+    dplyr::rename(
       fulfillmentBuilding = building,
       fulfillmentID = buildingID
     )

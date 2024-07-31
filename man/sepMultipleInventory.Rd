@@ -21,6 +21,6 @@ a new dataset where the units and cases are split into multiple line
 \description{
 Titan designs some of its reports, most notably the purchasing report, to
 list units and cases in the same line item. In order to get around this
-convetion, this command will split those items and produce separate line
+convention, this command will split those items and produce separate line
 items, one for ases, and one for units.
 }
