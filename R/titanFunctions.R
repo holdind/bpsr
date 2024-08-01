@@ -208,7 +208,7 @@ titanConvertHTML <-  function(inFile) {
 
 titanConvertProdRecs <- function(inFile,htmlListVars=c('school','date')) {
 
-  outFile <- titanImportProdRecs(inFile)
+  outFile <- titanImportProdRecs(inFile,htmlListVars=htmlListVars)
 
   outFileDir <- sprintf(
     '%s.csv',
