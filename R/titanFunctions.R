@@ -497,23 +497,23 @@ titanImportHTML <- function(inFile) {
 #' @export
 
 titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
-
+  
   htmlListVarsTotal <- length(htmlListVars)
-
+  
   titanColNames <- c(
     'identifier','name','plannedReimbursable','plannedNonReimbursable','plannedTotal',
     'offered','servedReimbursable','servedNonReimbursable','servedTotal','servedCost',
     'discardedTotal','discardedPctOfOffered','discardedCost','subtotal','leftOverTotal',
     'leftOverPctOfOffered','leftOverCost','productionCost'
   )
-
+  
   html <- rvest::read_html(inFile)
-
+  
   # Extract tables
   tables <- html %>%
     rvest::html_nodes("table") %>%
     purrr::map_df(~rvest::html_table(.x, header = FALSE))
-
+  
   # Extract unordered lists
   lists <- html %>%
     rvest::html_nodes("ul") %>%
@@ -525,13 +525,13 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
       # Convert list items to a data frame
       data.frame(value = items)
     })
-
+  
   # So ChatGPT got us this far, creating two data sets. We just need to figure out
   # which one to attach to which table. To do that, we're going to ennumerate both
   # lists. Each associated list item should last for 2 values. Each table is
   # broken up by an empty line with a dollar value under "served," which we'll use
   # to break up the table
-
+  
   listMerge <- lists %>%
     dplyr::mutate(
       id = ceiling(dplyr::row_number()/htmlListVarsTotal)
@@ -545,14 +545,14 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
       values_from = value
     ) %>%
     magrittr::set_names(c('id',htmlListVars))
-
+  
   if(any(grepl('date',htmlListVars))) {
     listMerge <- listMerge %>%
       dplyr::mutate(
         date = as.POSIXct(date, format = "%A, %B %d, %Y", tz = 'UTC')
       )
   }
-
+  
   df <- tables %>%
     magrittr::set_names(titanColNames) %>%
     dplyr::mutate(
@@ -565,24 +565,24 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
       !(identifier == 'Identifier' & name == 'Name')
     ) %>%
     dplyr::left_join(listMerge, by = 'id') %>%
-    dplyr::select(date,school,everything(),-c(counter,id)) %>%
-    dplyr::mutate_at(vars(plannedReimbursable:productionCost), ~ as.numeric(gsub("[,$%]", "", .)))
-
-  if(any(test=='school')) {
+    dplyr::select(htmlListVars,everything(),-c(counter,id)) %>%
+    dplyr::mutate_at(vars(plannedReimbursable:productionCost), ~ as.numeric(gsub("[,$%]", "", .))) %>% 
+    # extract and create a column containing the unit
+    dplyr::mutate(
+      unit = str_extract(name, "\\(([^()]|\\([^()]*\\))*\\)$") %>% 
+        str_replace("^\\((.*)\\)$", "\\1"),
+      name = str_remove(name, "\\s*\\(([^()]|\\([^()]*\\))*\\)$")
+    ) %>% 
+    dplyr::relocate(unit,.after=name)
+  
+  if(any(htmlListVars=='school')) {
     df <- df %>%
       splitNameAndID(school) %>%
       dplyr::rename(school = building)
   }
-
-  if(any(test=='date')) {
-    df <- df %>%
-      dplyr::mutate(
-        date = as.POSIXct(date,format = '%m/%d/%Y', tz = 'UTC')
-      )
-  }
-
+  
   return(df)
-
+  
 }
 
 #' Import and clean the Warehouse transfers report
