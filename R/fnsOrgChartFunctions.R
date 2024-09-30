@@ -42,9 +42,10 @@ fnsCoordList = function() {
 #' @return the currently assigned coordinators at schools
 #' @export
 
-fnsCoordListCurrent = function() {
+fnsCoordListByDate = function(cutOff=Sys.Date()) {
 
   df <- fnsCoordList() %>%
+    dplyr::filter(date < cutOff) %>%
     dplyr::group_by(deseID,titanID) %>%
     dplyr::filter(date == max(date)) %>%
     dplyr::ungroup()
