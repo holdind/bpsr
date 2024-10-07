@@ -48,6 +48,7 @@ fnsCoordListByDate = function(cutOff=Sys.Date()) {
     dplyr::filter(date < cutOff) %>%
     dplyr::group_by(deseID,titanID) %>%
     dplyr::filter(date == max(date)) %>%
+    dplyr::filter(fc != 'DISCONTINUED') %>% 
     dplyr::ungroup()
 
   return(df)
