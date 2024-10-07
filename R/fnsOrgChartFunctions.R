@@ -24,7 +24,7 @@ fnsCoordList = function() {
 
   githubDir <- 'https://raw.githubusercontent.com/holdind/bpsr/main/data/coordinatorList.csv'
 
-  returnDF <- readr::read_csv(githubDir, col_types = c('ccccc')) %>%
+  returnDF <- readr::read_csv(githubDir, col_types = c('cccccc')) %>%
     dplyr::mutate(
       date = as.POSIXct(date,format = '%m/%d/%Y', tz = 'UTC'),
       titanID = stringr::str_pad(titanID,3,pad='0')
