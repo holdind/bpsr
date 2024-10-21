@@ -1,0 +1,12 @@
+﻿program,meal,progName,enrollment
+CACFP AM Snack,AM snack,CACFP,closed
+NSLP Breakfast-Summer,breakfast,NSLP,closed
+Severe Need Breakfast Program,breakfast,NSLP,closed
+SFSP Breakfast Closed Enrolled,breakfast,SFSP,closed
+SFSP Breakfast Open,breakfast,SFSP,open
+CACFP Lunch,lunch,CACFP,closed
+National School Lunch Program,lunch,NSLP,closed
+NSLP Lunch-Summer,lunch,NSLP,closed
+SFSP Lunch Closed Enrolled,lunch,SFSP,closed
+SFSP Lunch Open,lunch,SFSP,open
+Child and Adult Care Food Program,dinner,CACFP,closed
