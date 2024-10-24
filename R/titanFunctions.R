@@ -4,14 +4,14 @@
 # also use it to fix the terrible practice of building the word DISCONTINUED
 # into keys
 
-#' @importFrom dplyr filter group_by left_join lag mutate mutate_at relocate
-#'   rename row_number select summarise ungroup
+#' @importFrom dplyr all_of filter group_by left_join lag mutate mutate_at relocate
+#'   rename row_number select summarise ungroup vars
 #' @importFrom janitor clean_names
 #' @importFrom magrittr %>% set_names
 #' @importFrom purrr map_df
 #' @importFrom readr read_csv
 #' @importFrom rvest html_nodes html_table html_text read_html
-#' @importFrom stringr str_count str_extract str_trim
+#' @importFrom stringr str_count str_extract str_remove str_replace str_trim
 #' @importFrom tidyr pivot_longer pivot_wider separate
 #' @importFrom tools file_path_sans_ext
 #'
@@ -515,23 +515,23 @@ titanImportHTML <- function(inFile) {
 #' @export
 
 titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
-
+  
   htmlListVarsTotal <- length(htmlListVars)
-
+  
   titanColNames <- c(
     'identifier','name','plannedReimbursable','plannedNonReimbursable','plannedTotal',
     'offered','servedReimbursable','servedNonReimbursable','servedTotal','servedCost',
     'discardedTotal','discardedPctOfOffered','discardedCost','subtotal','leftOverTotal',
     'leftOverPctOfOffered','leftOverCost','productionCost'
   )
-
+  
   html <- rvest::read_html(inFile)
-
+  
   # Extract tables
   tables <- html %>%
     rvest::html_nodes("table") %>%
     purrr::map_df(~rvest::html_table(.x, header = FALSE))
-
+  
   # Extract unordered lists
   lists <- html %>%
     rvest::html_nodes("ul") %>%
@@ -543,18 +543,18 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
       # Convert list items to a data frame
       data.frame(value = items)
     })
-
+  
   # So ChatGPT got us this far, creating two data sets. We just need to figure out
   # which one to attach to which table. To do that, we're going to ennumerate both
   # lists. Each associated list item should last for 2 values. Each table is
   # broken up by an empty line with a dollar value under "served," which we'll use
   # to break up the table
-
+  
   listMerge <- lists %>%
     dplyr::mutate(
       id = ceiling(dplyr::row_number()/htmlListVarsTotal)
     ) %>%
-    group_by(id) %>%
+    dplyr::group_by(id) %>%
     dplyr::mutate(
       colName = sprintf('v%s',dplyr::row_number())
     ) %>%
@@ -563,18 +563,18 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
       values_from = value
     ) %>%
     magrittr::set_names(c('id',htmlListVars))
-
+  
   if(any(grepl('date',htmlListVars))) {
     listMerge <- listMerge %>%
       dplyr::mutate(
         date = as.POSIXct(date, format = "%A, %B %d, %Y", tz = 'UTC')
       )
   }
-
+  
   df <- tables %>%
     magrittr::set_names(titanColNames) %>%
     dplyr::mutate(
-      counter = ifelse((dplyr::lag(identifier) == '' & dplyr::lag(name) == '') | row_number() == 1,1,0),
+      counter = ifelse((dplyr::lag(identifier) == '' & dplyr::lag(name) == '') | dplyr::row_number() == 1,1,0),
       id = cumsum(counter)
     ) %>%
     dplyr::filter(
@@ -583,24 +583,24 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
       !(identifier == 'Identifier' & name == 'Name')
     ) %>%
     dplyr::left_join(listMerge, by = 'id') %>%
-    dplyr::select(htmlListVars,everything(),-c(counter,id)) %>%
-    dplyr::mutate_at(vars(plannedReimbursable:productionCost), ~ as.numeric(gsub("[,$%]", "", .))) %>%
+    dplyr::select(dplyr::all_of(htmlListVars),everything(),-c(counter,id)) %>%
+    dplyr::mutate_at(dplyr::vars(plannedReimbursable:productionCost), ~ as.numeric(gsub("[,$%]", "", .))) %>%
     # extract and create a column containing the unit
     dplyr::mutate(
-      unit = str_extract(name, "\\(([^()]|\\([^()]*\\))*\\)$") %>%
-        str_replace("^\\((.*)\\)$", "\\1"),
-      name = str_remove(name, "\\s*\\(([^()]|\\([^()]*\\))*\\)$")
+      unit = stringr::str_extract(name, "\\(([^()]|\\([^()]*\\))*\\)$") %>%
+        stringr::str_replace("^\\((.*)\\)$", "\\1"),
+      name = stringr::str_remove(name, "\\s*\\(([^()]|\\([^()]*\\))*\\)$")
     ) %>%
     dplyr::relocate(unit,.after=name)
-
+  
   if(any(htmlListVars=='school')) {
     df <- df %>%
       splitNameAndID(school) %>%
       dplyr::rename(school = building)
   }
-
+  
   return(df)
-
+  
 }
 
 #' Import and clean the Warehouse transfers report
