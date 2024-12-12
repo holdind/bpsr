@@ -77,8 +77,8 @@ loadEndicoReports <- function(directory) {
   )
   
   grayColNames <- c(
-    'invNbr','invDate','distCustNbr','raName','manufacturer','productDesc','productNbr',
-    'usfProduct','qty','discountPerCase','discount','color'
+    'invNbr','invDate','distCustNbr','raName','productNbr',
+    'usfProduct','qty','discount','color'
   )
   
   for(f in fileNames) {
@@ -135,6 +135,8 @@ loadEndicoReports <- function(directory) {
         
       } else if (allowanceColor %in% c('grey')) {
         aeAllowanceSheet <- aeAllowanceSheet %>% 
+          janitor::clean_names(case='lower_camel') %>% 
+          select(invNumber,invDate,customerId,customerName,productId,did,quantity,amountDue) %>% 
           dplyr::rename_all(~grayColNames) %>% 
           janitor::clean_names(case='lower_camel') %>% 
           dplyr::mutate(discountPerCase = as.numeric(gsub('[^0-9.]','',discountPerCase)))
