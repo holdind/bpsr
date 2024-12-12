@@ -135,11 +135,9 @@ loadEndicoReports <- function(directory) {
         
       } else if (allowanceColor %in% c('grey')) {
         aeAllowanceSheet <- aeAllowanceSheet %>% 
-          janitor::clean_names(case='lower_camel') %>% 
-          select(invNumber,invDate,customerId,customerName,productId,did,quantity,amountDue) %>% 
+          select(invNumber,invDate,customerId,customerName,productId,did,quantity,amountDue,color) %>% 
           dplyr::rename_all(~grayColNames) %>% 
-          janitor::clean_names(case='lower_camel') %>% 
-          dplyr::mutate(discountPerCase = as.numeric(gsub('[^0-9.]','',discountPerCase)))
+          janitor::clean_names(case='lower_camel')
         
       }
       
