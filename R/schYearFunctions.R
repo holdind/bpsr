@@ -4,7 +4,7 @@
 # also use it to fix the terrible practice of building the word DISCONTINUED
 # into keys
 
-#' @importFrom dplyr anti_join filter group_by mutate n row_number select
+#' @importFrom dplyr anti_join filter group_by if_else mutate n row_number select
 #'   summarise ungroup
 #' @importFrom lubridate day days month year
 #' @importFrom magrittr %>%
@@ -90,15 +90,15 @@ bpsScheduleDates <- function(startYear=NA,endYear=NA) {
       range = as.numeric(end-start+1)
     ) %>%
     tidyr::uncount(range) %>%
-    group_by(fiscYear) %>% 
+    group_by(fiscYear) %>%
     dplyr::mutate(
       date = start+dplyr::row_number()*posixDayLength-posixDayLength,
       dow = weekdays(date)
     ) %>%
-    ungroup() %>% 
+    ungroup() %>%
     dplyr::select(fiscYear,date,dow) %>%
     dplyr::filter(!(dow %in% weekend)) %>%
-    dplyr::anti_join(daysOff, by = 'date') 
+    dplyr::anti_join(daysOff, by = 'date')
 
   return(df)
 
@@ -197,6 +197,51 @@ schYearFromDate <- function(date) {
   )
 
   return(schYear)
+
+}
+
+#' Take one of Dane's collapsed tables by day that needs to be expanded to merge,
+#' and expands it
+#'
+#' When Dane maintains tables, he likes to keep them fairly simple to maintain.
+#' For example, when he's tracking something that might change per annum, he
+#' likes to build tables with two year columns, one for the initial year that
+#' the assigned status occurs and one year for the final year of the status. If
+#' the second year is empty, it means that the status is still current. This
+#' algorithm takes these condensed tables and converts them into long form
+#' tables that can be merged on a fiscal year variable.
+#'
+#' @param condensedDF This is a data frame like the one described above, where a
+#'   status is assigned to an entity by day, but the table is maintained such
+#'   that there is an initial day and final day column. Excludes non-school days!
+#' @param startYearVar The variable containing the initial day of the status
+#' @param endYearVar The variable containin the final day of the status
+#' @return a longform table with each interstitial day that can be merged into
+#'   an existing report
+#' @export
+
+tableExpanderByDay <- function(condensedDF,startDateVar,endDateVar) {
+
+  # if a year value is empty in the right column, then it should be filled with
+  # the current fiscal year. To do this, we'll calculate the current fiscal year
+  # using the BPSR function on Sys.Date()
+  curDate <- Sys.Date()
+
+  finalDF <- condensedDF %>%
+    dplyr::mutate(
+      {{ endDateVar }} := dplyr::if_else(is.na({{ endDateVar }}), curDate ,{{ endDateVar }}),
+      expansionID = dplyr::row_number(),
+      expansionVal = as.numeric(difftime({{ endDateVar }},{{ startDateVar }},units='days'))+1
+    ) %>%
+    tidyr::uncount(expansionVal) %>%
+    dplyr::group_by(expansionID) %>%
+    dplyr::mutate(date = {{ startDateVar }} + lubridate::days(dplyr::row_number()-1)) %>%
+    dplyr::ungroup() %>%
+    select(-c({{ startDateVar }},{{ endDateVar }},expansionID)) %>%
+    # Remove non-school days
+    inner_join(bpsr::bpsScheduleDates() %>% select(date), by = 'date')
+
+  return(finalDF)
 
 }
 
