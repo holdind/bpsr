@@ -33,7 +33,7 @@ cashStringCleaner = function(vector) {
 
 fnsAvgLaborCost = function() {
 
-  githubDir <- 'https://raw.githubusercontent.com/holdind/bpsr/main/data/coordinatorList.csv'
+  githubDir <- 'https://raw.githubusercontent.com/holdind/bpsr/main/data/avgLaborHours.csv'
 
   returnDF <- readr::read_csv(githubDir, col_types = 'ncnn')
 
