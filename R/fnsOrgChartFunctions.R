@@ -12,6 +12,35 @@
 
 NULL
 
+#' Clean up strings with $ and , values embedded in them and convert them to
+#' numeric values.
+#'
+#' @param vector a string vector containing non-numeric character vectors
+#'   intended as cash values
+#' @return a numeric vector
+#' @export
+
+cashStringCleaner = function(vector) {
+  newVector <- as.numeric(gsub('[^0-9.-]','',vector))
+  return(newVector)
+}
+
+#' Imports the average labor hours by category for our staff
+#'
+#' @return a dataset containing average labor hours per year & the % multiplier
+#'   for calculating benefits
+#' @export
+
+fnsAvgLaborCost = function() {
+
+  githubDir <- 'https://raw.githubusercontent.com/holdind/bpsr/main/data/coordinatorList.csv'
+
+  returnDF <- readr::read_csv(githubDir, col_types = 'ncnn')
+
+  return(returnDF)
+
+}
+
 #' Import the full coordinator data set from Github
 #'
 #' This function provides quick access to the Coordinator List, which is
@@ -48,7 +77,7 @@ fnsCoordListByDate = function(cutOff=Sys.Date()) {
     dplyr::filter(date < cutOff) %>%
     dplyr::group_by(deseID,titanID) %>%
     dplyr::filter(date == max(date)) %>%
-    dplyr::filter(fc != 'DISCONTINUED') %>% 
+    dplyr::filter(fc != 'DISCONTINUED') %>%
     dplyr::ungroup()
 
   return(df)
