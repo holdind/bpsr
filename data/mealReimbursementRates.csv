@@ -1,15 +1,19 @@
-﻿startYear,endYear,meal,progName,prep,high,low
-2024,2024,breakfast,NSLP,all,2.825,2.73
-2025,,breakfast,NSLP,all,2.935,2.84
-2024,2024,lunch,NSLP,all,4.4,4.4
-2025,,lunch,NSLP,all,4.59,4.59
-2024,2024,dinner,CACFP,all,4.545,4.545
-2025,,dinner,CACFP,all,4.73,4.73
-2024,2024,lunch,SFSP,vended,4.87,4.87
-2025,,lunch,SFSP,vended,5.13,5.13
-2024,2024,breakfast,SFSP,vended,2.7725,2.7725
-2025,,breakfast,SFSP,vended,2.9225,2.9225
-2024,2024,lunch,SFSP,full-prep,4.95,4.95
-2025,,lunch,SFSP,full-prep,5.2125,5.2125
-2024,2024,breakfast,SFSP,full-prep,2.825,2.825
-2025,,breakfast,SFSP,full-prep,2.9775,2.9775
+﻿startYear,endYear,meal,progName,prep,high,low,mealEq
+2024,2024,breakfast,NSLP,all,2.825,2.73,0.666666667
+2025,,breakfast,NSLP,all,2.935,2.84,0.666666667
+2024,2024,breakfast,SFSP,vended,2.7725,2.7725,0.666666667
+2025,,breakfast,SFSP,vended,2.9225,2.9225,0.666666667
+2024,2024,breakfast,SFSP,full-prep,2.825,2.825,0.666666667
+2025,,breakfast,SFSP,full-prep,2.9775,2.9775,0.666666667
+2024,2024,dinner,CACFP,all,4.545,4.545,1
+2025,,dinner,CACFP,all,4.73,4.73,1
+2024,2024,lunch,NSLP,all,4.4,4.4,1
+2025,,lunch,NSLP,all,4.59,4.59,1
+2024,2024,lunch,SFSP,vended,4.87,4.87,1
+2025,,lunch,SFSP,vended,5.13,5.13,1
+2024,2024,lunch,SFSP,full-prep,4.95,4.95,1
+2025,,lunch,SFSP,full-prep,5.2125,5.2125,1
+2024,2024,AM Snack,CACFP,all,1.465,1.465,0.666666667
+2025,,AM Snack,CACFP,all,1.51,1.51,0.666666667
+2024,2024,lunch,CACFP,all,4.545,4.545,1
+2025,,lunch,CACFP,all,4.73,4.73,1
