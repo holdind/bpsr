@@ -4,14 +4,16 @@
 # also use it to fix the terrible practice of building the word DISCONTINUED
 # into keys
 
-#' @importFrom dplyr all_of filter group_by left_join lag mutate mutate_at relocate
-#'   rename row_number select summarise ungroup vars
+#' @importFrom dplyr across all_of everything filter group_by left_join lag
+#'   mutate mutate_at relocate rename row_number select summarise ungroup vars
 #' @importFrom janitor clean_names
 #' @importFrom magrittr %>% set_names
-#' @importFrom purrr map_df
-#' @importFrom readr read_csv
-#' @importFrom rvest html_nodes html_table html_text read_html
-#' @importFrom stringr str_count str_extract str_remove str_replace str_trim
+#' @importFrom purrr map_df map_dfr
+#' @importFrom readr parse_number read_csv
+#' @importFrom rvest html_element html_elements html_nodes html_table html_text
+#'   html_text2 read_html
+#' @importFrom stringr str_count str_extract str_match str_remove str_replace
+#'   str_trim
 #' @importFrom tidyr pivot_longer pivot_wider separate
 #' @importFrom tools file_path_sans_ext
 #'
@@ -95,13 +97,15 @@ sepMultipleInventory <- function(df, var) {
 #' @param df A Titan report containing a string units column formatted 'n
 #'   units'.
 #' @param var The Variable containing a string units column formatted 'n units'.
-#' @param nameTotal What you want to name the new total items variable.
-#' @param nameUnits What you want to name the new units variable
+#' @param nameTotal What you want to name the new total items variable. Not in
+#'   quotes, which is weird, but w/e
+#' @param nameUnits What you want to name the new units variable. Not in quotes,
+#'   which is we'rd, but w/e
 #' @return a data frame with a string units column and a numeric total units
 #'   column.
 #' @export
 
-sepQuantAndUnit <- function(df, var, nameTotal, nameUnits) {
+sepQuantAndUnit <- function(df, var, nameTotal=quantity, nameUnits=units) {
 
   strTotal <- deparse(substitute(nameTotal))
   strUnits <- deparse(substitute(nameUnits))
@@ -241,6 +245,31 @@ titanConvertProdRecs <- function(inFile,htmlListVars=c('school','date')) {
   )
 }
 
+#' Clean and convert a Receipt Tickets report to csv
+#'
+#' This function imports an HTML Receipt Tickets Report, converts it to a
+#' friendlier format, then exports it as a csv in the same directory.
+#'
+#' @param inFile Path to the input file
+#' @return a csv file in the same directory as the html file
+#' @export
+
+titanConvertReceiptTix <- function(inFile) {
+  outFile <- bpsr::titanImportReceiptTix(inFile)
+
+  outFileDir <- sprintf(
+    '%s.csv',
+    tools::file_path_sans_ext(inFile)
+  )
+
+  write.csv(
+    outFile,
+    outFileDir,
+    na = '',
+    row.names = F
+  )
+}
+
 #' Clean and convert a Warehouse Transfers report to csv
 #'
 #' This function imports an HTML Warehouse Transfers Report, converts it to a
@@ -251,7 +280,7 @@ titanConvertProdRecs <- function(inFile,htmlListVars=c('school','date')) {
 #' @export
 
 titanConvertWHTransfers <- function(inFile) {
-  outFile <- titanImportWHTransfers(inFile)
+  outFile <- bpsr::titanImportWHTransfers(inFile)
 
   outFileDir <- sprintf(
     '%s.csv',
@@ -515,23 +544,23 @@ titanImportHTML <- function(inFile) {
 #' @export
 
 titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
-  
+
   htmlListVarsTotal <- length(htmlListVars)
-  
+
   titanColNames <- c(
     'identifier','name','plannedReimbursable','plannedNonReimbursable','plannedTotal',
     'offered','servedReimbursable','servedNonReimbursable','servedTotal','servedCost',
     'discardedTotal','discardedPctOfOffered','discardedCost','subtotal','leftOverTotal',
     'leftOverPctOfOffered','leftOverCost','productionCost'
   )
-  
+
   html <- rvest::read_html(inFile)
-  
+
   # Extract tables
   tables <- html %>%
     rvest::html_nodes("table") %>%
     purrr::map_df(~rvest::html_table(.x, header = FALSE))
-  
+
   # Extract unordered lists
   lists <- html %>%
     rvest::html_nodes("ul") %>%
@@ -543,13 +572,13 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
       # Convert list items to a data frame
       data.frame(value = items)
     })
-  
+
   # So ChatGPT got us this far, creating two data sets. We just need to figure out
   # which one to attach to which table. To do that, we're going to ennumerate both
   # lists. Each associated list item should last for 2 values. Each table is
   # broken up by an empty line with a dollar value under "served," which we'll use
   # to break up the table
-  
+
   listMerge <- lists %>%
     dplyr::mutate(
       id = ceiling(dplyr::row_number()/htmlListVarsTotal)
@@ -563,14 +592,14 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
       values_from = value
     ) %>%
     magrittr::set_names(c('id',htmlListVars))
-  
+
   if(any(grepl('date',htmlListVars))) {
     listMerge <- listMerge %>%
       dplyr::mutate(
         date = as.POSIXct(date, format = "%A, %B %d, %Y", tz = 'UTC')
       )
   }
-  
+
   df <- tables %>%
     magrittr::set_names(titanColNames) %>%
     dplyr::mutate(
@@ -592,15 +621,68 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
       name = stringr::str_remove(name, "\\s*\\(([^()]|\\([^()]*\\))*\\)$")
     ) %>%
     dplyr::relocate(unit,.after=name)
-  
+
   if(any(htmlListVars=='school')) {
     df <- df %>%
       splitNameAndID(school) %>%
       dplyr::rename(school = building)
   }
-  
+
   return(df)
-  
+
+}
+
+#' Import a Titan HTML Item Receipts
+#'
+#' This function imports and cleans an HTML production records report from Titan
+#'
+#' @param inFile The path to a saved Titan Receipt Tickets Report
+#' @return a data frame containing the content of a Receipt Tickets Report
+#' @export
+
+titanImportReceiptTix <- function(inFile) {
+  html <- rvest::read_html(htmlPath)
+
+  pages <- rvest::html_elements(html, ".page-break")
+
+  intermediateDF <- purrr::map_dfr(pages, function(page) {
+    headerText <- page %>%
+      rvest::html_element(".sub-heading") %>%
+      rvest::html_text2()
+
+    referenceNumber  <- stringr::str_match(headerText, "Reference Number\\s*:\\s*(.*)\\s*")[,2]
+    receivingAgainst <- stringr::str_match(headerText, "Receiving Against\\s*:\\s*(.*)\\s*")[,2]
+    expectedDate     <- stringr::str_match(headerText, "Expected Date\\s*:\\s*(.*?)\\s*,\\s*Received Date")[,2]
+    receivedDate     <- stringr::str_match(headerText, "Received Date\\s*:\\s*(.*)")[,2]
+    fromLocation     <- stringr::str_match(headerText, "From\\s*:\\s*(.*?)(?:,|$)")[,2]
+    toLocation       <- stringr::str_match(headerText, "To\\s*:\\s*(.*)")[,2]
+
+    itemTable <- page %>%
+      rvest::html_element("table.striped") %>%
+      rvest::html_table(fill = TRUE) %>%
+      janitor::clean_names(case='lower_camel') %>%
+      dplyr::mutate(dplyr::across(dplyr::everything(), as.character))
+
+    dplyr::mutate(itemTable,
+                  referenceNumber  = referenceNumber,
+                  receivingAgainst = receivingAgainst,
+                  expectedDate     = expectedDate,
+                  receivedDate     = receivedDate,
+                  fromLocation     = fromLocation,
+                  toLocation       = toLocation
+    )
+  })
+
+  finalDF <- intermediateDF %>%
+    dplyr::filter(handlingFee != 'Grand Total') %>%
+    bpsr::sepQuantAndUnit(quantity,nameTotal=quantity,nameUnits=units) %>%
+    bpsr::splitNameAndID(toLocation) %>%
+    dplyr::mutate(
+      dplyr::across(c(cost,total,discount,handlingFee),readr::parse_number),
+      expectedDate = as.POSIXct(expectedDate,tz='utc',format='%B %d, %Y')
+    )
+
+  return(finalDF)
 }
 
 #' Import and clean the Warehouse transfers report
