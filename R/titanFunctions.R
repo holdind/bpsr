@@ -641,7 +641,7 @@ titanImportProdRecs <- function(inFile,htmlListVars=c('school','date')) {
 #' @export
 
 titanImportReceiptTix <- function(inFile) {
-  html <- rvest::read_html(htmlPath)
+  html <- rvest::read_html(inFile)
 
   pages <- rvest::html_elements(html, ".page-break")
 
