@@ -252,7 +252,7 @@ date,deseID,titanID,name,fc,notes
 8/26/2024,035-100,4370,Mendell,KB,
 9/1/2025,035-100,4370,Mendell,AA,KB leave
 1/29/2024,035-901,4370e,Mendell @ YMCA,KB,
-9/1/2025,035-901,4370e,Mendell @ YMCA,KB,
+9/1/2025,035-901,4370e,Mendell @ YMCA,AA,KB leave
 1/29/2024,035-988,4671,Mildred Ave,MP,
 7/1/2024,035-988,4671,Mildred Ave,VSM,summer 24
 8/26/2024,035-988,4671,Mildred Ave,MP,
@@ -274,6 +274,7 @@ date,deseID,titanID,name,fc,notes
 1/29/2024,035-156,4322,Otis,FP,
 10/7/2024,035-156,4322,Otis,BJ,FP leave
 10/30/2024,035-156,4322,Otis,FP,
+9/1/2025,035-156,4322,Otis,TC,FP leave
 1/29/2024,035-231,4022,Perkins,VSM,
 7/1/2024,035-231,4022,Perkins,KB,summer 24
 8/26/2024,035-231,4022,Perkins,FP,VSM retirement
