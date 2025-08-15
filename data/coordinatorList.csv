@@ -6,22 +6,28 @@ date,deseID,titanID,name,fc,notes
 1/29/2024,035-302,4361,Adams,FP,
 7/1/2024,035-302,4361,Adams,BJ,summer 24
 8/26/2024,035-302,4361,Adams,FP,
-10/7/2024,035-302,4361,Adams,LK,FP out oct 204
+10/7/2024,035-302,4361,Adams,LK,FP leave
 10/30/2024,035-302,4361,Adams,FP,
+9/1/2025,035-302,4361,Adams,TC,FP leave
+4/22/2025,035-525,1120,Al Holland,MP,
 1/29/2024,035-066,4321,Alighieri,FP,
 7/1/2024,035-066,4321,Alighieri,BJ,summer 24
 8/26/2024,035-066,4321,Alighieri,FP,
-10/7/2024,035-066,4321,Alighieri,KB,FP out oct 204
+10/7/2024,035-066,4321,Alighieri,KB,FP leave
 10/30/2024,035-066,4321,Alighieri,FP,
+9/1/2025,035-066,4321,Alighieri,TC,FP leave
 7/1/2024,,948,All Dorchester Sports,LK,summer 24
 1/29/2024,035-444,1420,BAA,FP,
 7/1/2024,035-444,1420,BAA,BJ,summer 24
 8/26/2024,035-444,1420,BAA,KB,
+9/1/2025,035-444,1420,BAA,AA,KB leave
 1/29/2024,035-129,4621,Baldwin,KB,
+9/1/2025,035-129,4621,Baldwin,AA,KB leave
 1/29/2024,035-008,1215,BATA,AC,
 7/1/2024,035-008,1215,BATA,FP,summer 24
 8/26/2024,035-008,1215,BATA,AC,
 8/26/2024,035-625,1216,BATA East,FP,
+9/1/2025,035-625,1216,BATA East,TC,
 1/29/2024,035-278,4081,Bates,LK,
 1/29/2024,035-016,1311a,BCHS - ABCD,AC,
 7/1/2024,035-016,1311a,BCHS - ABCD,KB,summer 24
@@ -45,20 +51,22 @@ date,deseID,titanID,name,fc,notes
 1/29/2024,035-650,1470,Boston Green,KB,
 7/1/2024,035-650,1470,Boston Green,MP,summer 24
 8/26/2024,035-650,1470,Boston Green,KB,
+9/1/2025,035-650,1470,Boston Green,AA,KB leave
 1/29/2024,035-217,1990,Boston International High,MP,
 7/1/2024,035-217,1990,Boston International High,AC,summer 24
 8/26/2024,035-217,1990,Boston International High,MP,
 1/29/2024,035-215,4062,Bradley,FP,
-10/7/2024,035-215,4062,Bradley,KB,FP out oct 204
+10/7/2024,035-215,4062,Bradley,KB,FP leave
 10/30/2024,035-215,4062,Bradley,FP,
+9/1/2025,035-215,4062,Bradley,TC,FP leave
 1/29/2024,035-505,1040,Brighton High,KB,
+9/1/2025,035-505,1040,Brighton High,AA,KB leave
 1/29/2024,035-004,4661,BTU Pilot,LK,
 7/1/2024,035-004,4661,BTU Pilot,FP,summer 24
 8/26/2024,035-004,4661,BTU Pilot,LK,
 1/29/2024,035-525,1120,Burke/Holland,BJ,
 7/1/2024,035-525,1120,Burke/Holland,MP,summer 24
 8/26/2024,035-525,1120,Burke/Holland,BJ,
-4/22/2025,035-525,1120,Burke/Holland,MP,
 1/29/2024,035-904,1103,CASH,VSM,
 8/26/2024,035-904,1103,CASH,MP,VSM retirement;summer 24
 7/1/2024,,105,Catholic Charities,FP,summer 24
@@ -72,39 +80,46 @@ date,deseID,titanID,name,fc,notes
 7/1/2024,035-154,4070,Chittick,KB,summer 24
 8/26/2024,035-154,4070,Chittick,LK,
 1/29/2024,035-298,4531,Clap,FP,
-10/7/2024,035-298,4531,Clap,AC,FP out oct 204
+10/7/2024,035-298,4531,Clap,AC,FP leave
 10/30/2024,035-298,4531,Clap,FP,
+9/1/2025,035-298,4531,Clap,TC,FP leave
 1/29/2024,035-902,1340,Community Academy,AC,
 1/29/2024,035-940,95,Compass,AC,
 1/29/2024,035-146,4630,Condon,FP,
-10/7/2024,035-146,4630,Condon,KB,FP out oct 204
+10/7/2024,035-146,4630,Condon,KB,FP leave
 10/30/2024,035-146,4630,Condon,FP,
+9/1/2025,035-146,4630,Condon,TC,FP leave
 1/29/2024,035-122,4080,Conley,LK,
 1/29/2024,035-010,91,Counseling Center,AC,
 7/1/2024,,943,Courageous Sailing @ Charlestown,BJ,summer 24
 1/29/2024,035-420,4272,Curley,KB,
 7/1/2024,035-420,4272,Curley,FP,summer 24
 8/26/2024,035-420,4272,Curley,KB,
+9/1/2025,035-420,4272,Curley,AA,KB leave
 1/29/2024,035-997,1260,Dearborn,MP,
 7/1/2024,035-997,1260,Dearborn,LK,summer 24
 8/26/2024,035-997,1260,Dearborn,MP,
 1/29/2024,035-268,4100,Dever,FP,
-10/7/2024,035-268,4100,Dever,MP,FP out oct 204
+10/7/2024,035-268,4100,Dever,MP,FP leave
 10/30/2024,035-268,4100,Dever,FP,
+9/1/2025,035-268,4100,Dever,TC,FP leave
 1/29/2024,035-459,4123,Dudley,MP,
 1/29/2024,035-906,4450,East Boston EEC,FP,
 7/1/2024,035-906,4450,East Boston EEC,BJ,summer 24
 8/26/2024,035-906,4450,East Boston EEC,FP,
-10/7/2024,035-906,4450,East Boston EEC,LK,FP out oct 204
+10/7/2024,035-906,4450,East Boston EEC,LK,FP leave
 10/30/2024,035-906,4450,East Boston EEC,FP,
+9/1/2025,035-906,4450,East Boston EEC,TC,FP leave
 1/29/2024,035-530,1070,East Boston High,FP,
 7/1/2024,035-530,1070,East Boston High,BJ,summer 24
 8/26/2024,035-530,1070,East Boston High,FP,
-10/7/2024,035-530,1070,East Boston High,KB,FP out oct 204
+10/7/2024,035-530,1070,East Boston High,KB,FP leave
 10/30/2024,035-530,1070,East Boston High,FP,
+9/1/2025,035-530,1070,East Boston High,TC,FP leave
 1/29/2024,035-425,4178,Edison,KB,
 7/1/2024,035-425,4178,Edison,MP,summer 24
 8/26/2024,035-425,4178,Edison,KB,
+9/1/2025,035-425,4178,Edison,AA,KB leave
 1/29/2024,035-096,4381char,Eliot - Charter St,AC,
 1/29/2024,035-998,4381com,Eliot - Commercial St,AC,
 7/1/2024,035-998,4381com,Eliot - Commercial St,VSM,summer 24
@@ -121,27 +136,34 @@ date,deseID,titanID,name,fc,notes
 1/29/2024,035-535,1080,English High,KB,
 7/1/2024,035-535,1080,English High,MP,summer 24
 8/26/2024,035-535,1080,English High,KB,
+9/1/2025,035-535,1080,English High,AA,KB leave
 1/29/2024,035-088,4140,Everett,VSM,
 8/26/2024,035-088,4140,Everett,BJ,VSM retirement;summer 24
 1/29/2024,035-570,1162,Excel,FP,
-10/7/2024,035-570,1162,Excel,MP,FP out oct 204
+10/7/2024,035-570,1162,Excel,MP,FP leave
 10/30/2024,035-570,1162,Excel,FP,
+9/1/2025,035-570,1162,Excel,TC,FP leave
 1/29/2024,035-710,1265,Fenway,KB,
+9/1/2025,035-710,1265,Fenway,AA,KB leave
 7/1/2024,,932,Franklin Park Zoo,FP,summer 24
 1/29/2024,035-989,2360,Frederick,BJ,
 7/1/2024,035-989,2360,Frederick,AC,summer 24
 8/26/2024,035-989,2360,Frederick,BJ,
+9/1/2025,035-989,2360,Frederick,DISCONTINUED,
 1/29/2024,035-326,4160,Gardner,KB,
 7/1/2024,035-326,4160,Gardner,MP,summer 24
 8/26/2024,035-326,4160,Gardner,KB,
+9/1/2025,035-326,4160,Gardner,AA,
 1/29/2024,035-901,1430,Greater Egleston High,KB,
+9/1/2025,035-901,1430,Greater Egleston High,AA,
 1/29/2024,035-308,4130,Greenwood,VSM,
 7/1/2024,035-308,4130,Greenwood,LK,summer 24
 8/26/2024,035-308,4130,Greenwood,AC,VSM retirement
 1/29/2024,035-135,4200,Grew,LK,
 1/29/2024,035-062,4061,Guild,FP,
-10/7/2024,035-062,4061,Guild,LK,FP out oct 204
+10/7/2024,035-062,4061,Guild,LK,FP leave
 10/30/2024,035-062,4061,Guild,FP,
+9/1/2025,035-062,4061,Guild,TC,FP leave
 1/29/2024,035-243,4113,Hale,MP,
 7/1/2024,,7271,Hale Reservation,VSM,summer 24
 1/29/2024,035-077,4210,Haley,LK,
@@ -158,7 +180,9 @@ date,deseID,titanID,name,fc,notes
 1/29/2024,035-153,4230,Hennigan,KB,
 7/1/2024,035-153,4230,Hennigan,MP,summer 24
 8/26/2024,035-153,4230,Hennigan,KB,
+9/1/2025,035-153,4230,Hennigan,AA,KB leave
 1/29/2024,035-691,4053,Hernandez,KB,
+9/1/2025,035-691,4053,Hernandez,AA,KB leave
 1/29/2024,035-137,4241,Higginson,MP,
 7/1/2024,035-137,4241,Higginson,AC,summer 24
 8/26/2024,035-137,4241,Higginson,MP,
@@ -174,24 +198,29 @@ date,deseID,titanID,name,fc,notes
 7/1/2024,035-182,4260,Hurley,FP,summer 24
 8/26/2024,035-182,4260,Hurley,BJ,
 1/29/2024,035-166,4270,JFK,KB,
+9/1/2025,035-166,4270,JFK,AA,KB leave
 1/29/2024,035-328,4390,Kenny,MP,
 1/29/2024,035-060,4031,Kilmer Lower,LK,
 1/29/2024,035-190,4033,Kilmer Upper,LK,
 1/29/2024,035-410,4055,King,BJ,
 1/29/2024,035-102,4291,Lee Academy,VSM,
 8/26/2024,035-102,4291,Lee Academy,FP,VSM retirement;summer 24
-10/7/2024,035-102,4291,Lee Academy,MP,FP out oct 204
+10/7/2024,035-102,4291,Lee Academy,MP,FP leave
 10/30/2024,035-102,4291,Lee Academy,FP,
+9/1/2025,035-102,4291,Lee Academy,TC,FP leave
 1/29/2024,035-183,4290,Lee K-8,BJ,
 7/1/2024,035-183,4290,Lee K-8,LK,summer 24
 8/26/2024,035-183,4290,Lee K-8,BJ,
+9/1/2025,035-183,4290,Lee K-8,LK,
 1/29/2024,035-392,4331,Lyndon,LK,
 7/1/2024,035-392,4331,Lyndon,VSM,summer 24
 8/26/2024,035-392,4331,Lyndon,LK,
 1/29/2024,035-009,1171,Lyon High,KB,
+9/1/2025,035-009,1171,Lyon High,AA,KB leave
 1/29/2024,035-002,4171,Lyon K-8,KB,
 7/1/2024,035-002,4171,Lyon K-8,MP,summer 24
 8/26/2024,035-002,4171,Lyon K-8,KB,
+9/1/2025,035-002,4171,Lyon K-8,AA,KB leave
 1/29/2024,035-537,1210,Madison Park,BJ,
 7/1/2024,035-537,1210,Madison Park,VSM,summer 24
 8/26/2024,035-537,1210,Madison Park,BJ,
@@ -207,17 +236,23 @@ date,deseID,titanID,name,fc,notes
 1/29/2024,035-080,4360,McKay,FP,
 7/1/2024,035-080,4360,McKay,BJ,summer 24
 8/26/2024,035-080,4360,McKay,FP,
-10/7/2024,035-080,4360,McKay,LK,FP out oct 204
+10/7/2024,035-080,4360,McKay,LK,FP leave
 10/30/2024,035-080,4360,McKay,FP,
+9/1/2025,035-080,4360,McKay,TC,FP leave
 1/29/2024,035-038,1291,Mel King Elementary,KB,
+9/1/2025,035-038,1291,Mel King Elementary,AA,KB leave
 1/29/2024,035-363,1292,Mel King Middle,KB,
+9/1/2025,035-363,1292,Mel King Middle,DISCONTINUED,
 1/29/2024,035-001,1293,Mel King S. End,KB,
 7/1/2024,035-001,1293,Mel King S. End,FP,summer 24
 8/26/2024,035-001,1293,Mel King S. End,KB,
+9/1/2025,035-001,1293,Mel King S. End,AA,KB leave
 1/29/2024,035-100,4370,Mendell,KB,
 7/1/2024,035-100,4370,Mendell,AC,summer 24
 8/26/2024,035-100,4370,Mendell,KB,
+9/1/2025,035-100,4370,Mendell,AA,KB leave
 1/29/2024,035-901,4370e,Mendell @ YMCA,KB,
+9/1/2025,035-901,4370e,Mendell @ YMCA,KB,
 1/29/2024,035-988,4671,Mildred Ave,MP,
 7/1/2024,035-988,4671,Mildred Ave,VSM,summer 24
 8/26/2024,035-988,4671,Mildred Ave,MP,
@@ -226,47 +261,54 @@ date,deseID,titanID,name,fc,notes
 1/29/2024,035-240,4400,Murphy,BJ,
 1/29/2024,035-700,1285,New Mission High,VSM,
 8/26/2024,035-700,1285,New Mission High,LK,VSM retirement;summer 24
+9/1/2025,035-700,1285,New Mission High,BJ,
 1/29/2024,035-537,1030,O'Bryant,BJ,
 7/1/2024,035-537,1030,O'Bryant,VSM,summer 24
 8/26/2024,035-537,1030,O'Bryant,BJ,
 1/29/2024,035-141,4543,O'Donnell,FP,
-10/7/2024,035-141,4543,O'Donnell,BJ,FP out oct 204
+10/7/2024,035-141,4543,O'Donnell,BJ,FP leave
 10/30/2024,035-141,4543,O'Donnell,FP,
+9/1/2025,035-141,4543,O'Donnell,TC,FP leave
 1/29/2024,035-256,4410,Ohrenberger,LK,
 1/29/2024,035-990,4680,Orchard Gardens,BJ,
 1/29/2024,035-156,4322,Otis,FP,
-10/7/2024,035-156,4322,Otis,BJ,FP out oct 204
+10/7/2024,035-156,4322,Otis,BJ,FP leave
 10/30/2024,035-156,4322,Otis,FP,
 1/29/2024,035-231,4022,Perkins,VSM,
 7/1/2024,035-231,4022,Perkins,KB,summer 24
 8/26/2024,035-231,4022,Perkins,FP,VSM retirement
-10/7/2024,035-231,4022,Perkins,BJ,FP out oct 204
+10/7/2024,035-231,4022,Perkins,BJ,FP leave
 10/30/2024,035-231,4022,Perkins,FP,
+9/1/2025,035-231,4022,Perkins,TC,FP leave
 1/29/2024,035-255,4592,Perry,FP,
 7/1/2024,035-255,4592,Perry,BJ,summer 24
 8/26/2024,035-255,4592,Perry,FP,
-10/7/2024,035-255,4592,Perry,MP,FP out oct 204
+10/7/2024,035-255,4592,Perry,MP,FP leave
 10/30/2024,035-255,4592,Perry,FP,
+9/1/2025,035-255,4592,Perry,TC,FP leave
 1/29/2024,035-172,4561,Philbrick,LK,
 7/1/2024,035-172,4561,Philbrick,KB,summer 24
 8/26/2024,035-172,4561,Philbrick,LK,
+9/1/2025,035-172,4561,Philbrick,DISCONTINUED,
 1/29/2024,035-264,4541,PJK,FP,
-10/7/2024,035-264,4541,PJK,AC,FP out oct 204
+10/7/2024,035-264,4541,PJK,AC,FP leave
 10/30/2024,035-264,4541,PJK,FP,
+9/1/2025,035-264,4541,PJK,TC,FP leave
 1/29/2024,035-286,4650,Quincy Elementary,AC,
 1/29/2024,035-480,1450,Quincy Upper,AC,
 7/1/2024,035-480,1450,Quincy Upper,LK,summer 24
 8/26/2024,035-480,1450,Quincy Upper,AC,
 1/29/2024,035-059,4193,Roosevelt Lower,VSM,
+7/1/2024,035-059,4193,Roosevelt Lower,LK,VSM retirement;summer 24
 1/29/2024,035-116,4192,Roosevelt Upper,VSM,
 7/1/2024,035-116,4192,Roosevelt Upper,LK,VSM retirement;summer 24
 1/29/2024,035-366,4530,Russell,VSM,
 8/26/2024,035-366,4530,Russell,AC,VSM retirement;summer 24
 8/26/2024,035-179,1194,Ruth Batson Academy,FP,renamed
-10/7/2024,035-179,1194,Ruth Batson Academy,AC,FP out oct 204
+10/7/2024,035-179,1194,Ruth Batson Academy,AC,FP leave
 10/30/2024,035-179,1194,Ruth Batson Academy,FP,
+9/1/2025,035-179,1194,Ruth Batson Academy,TC,renamed
 1/29/2024,035-270,4670,Shaw,BJ,
-8/26/2024,035-270,4670,Taylor-Shaw,BJ,Taylor/Shaw alignment
 1/29/2024,035-690,1200,Snowden,AC,
 7/1/2024,,147,Sportsmans,AC,summer 24
 8/26/2024,,147,Sportsmans,UNKNOWN,
@@ -275,8 +317,11 @@ date,deseID,titanID,name,fc,notes
 1/29/2024,035-052,4560,Sumner,LK,
 7/1/2024,035-052,4560,Sumner,KB,summer 24
 8/26/2024,035-052,4560,Sumner,LK,
+9/1/2025,035-052,4560,Sumner,DISCONTINUED,moved to Irving
 1/29/2024,035-445,2140,Sumner Upper,LK,
+9/1/2025,035-445,2140,Roberts,LK,
 1/29/2024,035-054,4151,Taylor,MP,
+8/26/2024,035-270,4670,Taylor-Shaw,BJ,Taylor/Shaw alignment
 8/26/2024,035-054,4151,Taylor-Shaw,MP,Taylor/Shaw alignment
 1/29/2024,035-520,1460,TechBoston,MP,
 7/1/2024,035-520,1460,TechBoston,AC,summer 24
@@ -288,11 +333,13 @@ date,deseID,titanID,name,fc,notes
 1/29/2024,035-181,4590,Tynan,FP,
 7/1/2024,035-181,4590,Tynan,AC,summer 24
 8/26/2024,035-181,4590,Tynan,FP,
-10/7/2024,035-181,4590,Tynan,AC,FP out oct 204
+10/7/2024,035-181,4590,Tynan,AC,FP leave
 10/30/2024,035-181,4590,Tynan,FP,
+9/1/2025,035-181,4590,Tynan,TC,FP leave
 1/29/2024,035-405,4323,Umana,FP,
-10/7/2024,035-405,4323,Umana,BJ,FP out oct 204
+10/7/2024,035-405,4323,Umana,BJ,FP leave
 10/30/2024,035-405,4323,Umana,FP,
+9/1/2025,035-405,4323,Umana,TC,FP leave
 1/29/2024,035-435,2450,UP Boston,VSM,
 1/29/2024,035-178,4345,UP Dorchester,VSM,
 7/1/2024,035-178,4345,UP Dorchester,KB,summer 24
@@ -304,8 +351,8 @@ date,deseID,titanID,name,fc,notes
 7/1/2024,035-346,4283,Warren-Prescott,BJ,summer 24
 8/26/2024,035-346,4283,Warren-Prescott,AC,
 1/29/2024,035-374,4173,Winship,KB,
+9/1/2025,035-374,4173,Winship,AA,
 1/29/2024,035-180,4052,Winthrop,BJ,
 1/29/2024,035-395,4600,Young Achievers,MP,
 7/1/2024,035-395,4600,Young Achievers,AC,summer 24
 8/26/2024,035-395,4600,Young Achievers,MP,
-7/1/2024,035-059,4193,Roosevelt Lower,LK,VSM retirement;summer 24
